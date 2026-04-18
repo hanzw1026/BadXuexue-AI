@@ -1,0 +1,15 @@
+PySide6
+openai
+requests
+markdown
+python-dotenv
+pandas
+python-docx
+PyPDF2
+pdf2image
+pytesseract
+chromadb
+sentence-transformers
+transformers
+torch
+pycryptodome
