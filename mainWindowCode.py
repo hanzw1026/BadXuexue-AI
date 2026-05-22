@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainWindow_V0.4.ui'
+## Form generated from reading UI file 'mainWindow_V0.5.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.0
 ##
@@ -204,7 +204,7 @@ class Ui_mainWindow(object):
         mainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(mainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1920, 30))
+        self.menubar.setGeometry(QRect(0, 0, 1920, 39))
         mainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(mainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -219,7 +219,7 @@ class Ui_mainWindow(object):
         mainWindow.setWindowTitle(QCoreApplication.translate("mainWindow", u"\u96ea\u96ea\u7684AI\u5ba2\u6237\u7aefV0.4", None))
         self.btn_mode_sel_1.setText(QCoreApplication.translate("mainWindow", u"\u65e5\u5e38\u804a\u5929", None))
         self.btn_mode_sel_2.setText(QCoreApplication.translate("mainWindow", u"\u79d1\u7814\u52a9\u7406-API\u6a21\u5f0f", None))
-        self.btn_mode_sel_3.setText(QCoreApplication.translate("mainWindow", u"\u79d1\u7814\u52a9\u7406-\u8131\u654f\u6a21\u5f0f", None))
+        self.btn_mode_sel_3.setText(QCoreApplication.translate("mainWindow", u"\u79d1\u7814\u52a9\u7406-RAG\u6a21\u5f0f", None))
         self.btn_mode_sel_4.setText(QCoreApplication.translate("mainWindow", u"\u79d1\u7814\u52a9\u7406-\u672c\u5730\u6a21\u5f0f", None))
         self.btn_mode_sel_5.setText(QCoreApplication.translate("mainWindow", u"Coding\u6a21\u5f0f", None))
         self.btn_mode_sel_6.setText(QCoreApplication.translate("mainWindow", u"\u8c46\u5305\u6587\u6863\u751f\u6210", None))

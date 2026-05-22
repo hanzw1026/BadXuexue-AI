@@ -27,9 +27,13 @@ import setting_dialog
 import knowledge_base_dialog
 import knowledge_dialog_ui
 from knowledge_base_dialog import KnowledgeBaseDialog
+import shutil
+import openpyxl
 
 isInTestMode = init_config.isInTestMode
 
+chat_mode_model_name = "deepseek-v4-flash"
+research_mode_model_name = "deepseek-v4-pro"
 
 def resource_path(relative_path):
     """获取打包后资源的绝对路径
@@ -322,7 +326,7 @@ class MainWindowWidget(QMainWindow):
         # 根据聊天模式加载历史消息
         self.local_exist_history_files = {"chat": "chat_history.json",
                                           "research_api": "research_api_history.json",
-                                          "research_desensitize": "research_desensitize_history.json",
+                                          "research_rag": "research_rag_history.json",
                                           "research_local": "research_local_history.json",
                                           "code": "code_history.json"}
         self.history_file = self.local_exist_history_files[self.current_mode]
@@ -334,7 +338,7 @@ class MainWindowWidget(QMainWindow):
         # 根据聊天模式加载输入框默认提示词
         self.input_placeholder_presets = {"chat": "输入你想发送的消息～",
                                           "research_api": "把文件草稿给我，并准确描述你的要求。",
-                                          "research_desensitize": "把文件草稿给我，并准确描述你的要求。",
+                                          "research_rag": "把文件草稿给我，并准确描述你的要求。",
                                           "research_local": "把文件草稿给我，并准确描述你的要求。",
                                           "code": "代码遇到了什么问题呢？"}
         self.input_placeholder = self.input_placeholder_presets[self.current_mode]
@@ -347,7 +351,7 @@ class MainWindowWidget(QMainWindow):
         self.mode_buttons = {
             "chat": self.ui0.btn_mode_sel_1,
             "research_api": self.ui0.btn_mode_sel_2,
-            "research_desensitize": self.ui0.btn_mode_sel_3,
+            "research_rag": self.ui0.btn_mode_sel_3,
             "research_local": self.ui0.btn_mode_sel_4,
             "code": self.ui0.btn_mode_sel_5,
             "setting": self.ui0.btn_sys_setting
@@ -362,7 +366,7 @@ class MainWindowWidget(QMainWindow):
         self.ui0.btn_clear_message.clicked.connect(self.ClearChat)
         self.ui0.btn_mode_sel_1.clicked.connect(lambda: self.SwitchMode("chat"))
         self.ui0.btn_mode_sel_2.clicked.connect(lambda: self.SwitchMode("research_api"))
-        self.ui0.btn_mode_sel_3.clicked.connect(lambda: self.SwitchMode("research_desensitize"))
+        self.ui0.btn_mode_sel_3.clicked.connect(lambda: self.SwitchMode("research_rag"))
         self.ui0.btn_mode_sel_4.clicked.connect(lambda: self.SwitchMode("research_local"))
         self.ui0.btn_mode_sel_5.clicked.connect(lambda: self.SwitchMode("code"))
         self.ui0.btn_upload_file.clicked.connect(self.UploadFile)
@@ -492,7 +496,7 @@ class MainWindowWidget(QMainWindow):
             socket.create_connection(("api.deepseek.com", 443), timeout=5)
             # 网络正常，恢复之前的状态
             # 如果当前没有在忙碌，就设为正常状态
-            if self.current_mode in ["research_api", "research_local", "code", "research_desensitize"]:
+            if self.current_mode in ["research_api", "research_local", "code", "research_rag"]:
                 # 如果是科研/代码模式，保持忙碌状态？这里需要判断是否正在计算
                 # 简单处理：如果不在计算中，就设为正常
                 if not hasattr(self, 'is_calculating') or not self.is_calculating:
@@ -596,7 +600,7 @@ class MainWindowWidget(QMainWindow):
             return [{"role": "system", "content": chat_assistant_prompt}]  # 这里用的是变量
         elif mode == "research_api":
             return [{"role": "system", "content": research_system_prompt}]
-        elif mode == "research_desensitize":
+        elif mode == "research_rag":
             return [{"role": "system", "content": research_system_prompt}]
         elif mode == "research_local":
             return [{"role": "system", "content": research_system_prompt}]
@@ -606,15 +610,27 @@ class MainWindowWidget(QMainWindow):
             return [{"role": "system", "content": "模式切换状态读取失败，尝试输入你需要发送的消息。"}]
 
     def SaveHistory(self):
+        if isInTestMode:
+            print(f"💾 SaveHistory: 当前有 {len(self.raw_message)} 条消息")
+            for i, msg in enumerate(self.raw_message):
+                print(f"   消息{i}: role={msg['role']}, content长度={len(msg['content'])}")
+
         # 保存前也过滤一次信息，删掉文档内容
         filtered = []
         for msg in self.raw_message:
-            if msg["role"] == "user" and "【文件内容开始】" in msg["content"]:
+            if msg["role"] == "user" and ("【文件内容开始】" in msg["content"] or "【知识库检索内容开始】" in msg["content"]):
                 import re
+                # 先去掉文件内容标记内的内容
                 cleaned = re.sub(r'【文件内容开始】.*?【文件内容结束】', '', msg["content"], flags=re.DOTALL)
+                # 再去掉知识库检索内容标记内的内容
+                cleaned = re.sub(r'【知识库检索内容开始】.*?【知识库检索内容结束】', '', cleaned, flags=re.DOTALL)
                 if cleaned.strip():
                     msg["content"] = cleaned
                     filtered.append(msg)
+
+                    if isInTestMode:
+                        print(f"   过滤后: {len(filtered)} 条消息")
+
             else:
                 filtered.append(msg)
 
@@ -727,7 +743,7 @@ class MainWindowWidget(QMainWindow):
                 api_key, api_url = get_api_key_for_mode(mode)
                 client = OpenAI(api_key=api_key,
                                 base_url=api_url)
-                response = client.chat.completions.create(model="deepseek-chat",
+                response = client.chat.completions.create(model=chat_mode_model_name,
                                                           messages=self.raw_message,
                                                           stream=False,
                                                           timeout=30)  # 添加一个超时设置，防止卡死
@@ -763,7 +779,7 @@ class MainWindowWidget(QMainWindow):
         elif self.current_mode.startswith("research"):
             if self.current_mode == "research_api":
                 prefix = research_prefix_1
-            elif self.current_mode == "research_desensitize":
+            elif self.current_mode == "research_rag":
                 prefix = research_prefix_2
             else:  # research_local
                 prefix = research_prefix_3
@@ -833,7 +849,13 @@ class MainWindowWidget(QMainWindow):
             try:
                 api_key, api_url = get_api_key_for_mode(mode)
                 client = OpenAI(api_key=api_key, base_url=api_url)
-                stream = client.chat.completions.create(model="deepseek-chat",
+
+                if self.current_mode.startswith("research") or self.current_mode == "code":
+                    model_sel = research_mode_model_name
+                else:
+                    model_sel = chat_mode_model_name
+
+                stream = client.chat.completions.create(model=model_sel,
                                                         messages=self.raw_message,
                                                         stream=True,
                                                         timeout=30,
@@ -853,6 +875,10 @@ class MainWindowWidget(QMainWindow):
                         else:
                             self.UpdateLastAssistantMessage(full_response)
                         QApplication.processEvents()
+
+                if isInTestMode:
+                    print(f"🔧 CallbackStreamMode: full_response长度 = {len(full_response)}")
+                    print(f"🔧 内容预览: {full_response[:100]}")
 
                 self.raw_message[placeholder_index]["content"] = full_response
                 self.SaveHistory()
@@ -980,7 +1006,7 @@ class MainWindowWidget(QMainWindow):
         self.raw_message.append({"role": "user", "content": user_text})
 
         # 调用API之前
-        if (self.current_mode in ["research_api", "research_local", "code", "research_desensitize"]) and is_stream_mode:
+        if (self.current_mode in ["research_api", "research_local", "code", "research_rag"]) and is_stream_mode:
             self.is_calculating = True
             self.update_system_info("busy")
             QApplication.processEvents()
@@ -991,14 +1017,23 @@ class MainWindowWidget(QMainWindow):
                 self.CallbackStreamMode("chat")
             else:
                 self.CallbackStaticMode("chat")
+
         elif self.current_mode == "research_api":
+            # 科研在线模式：不搜索知识库，直接调用
+            if is_stream_mode:
+                self.CallbackStreamMode("research_api")
+            else:
+                self.CallbackStaticMode("research_api")
+
+        elif self.current_mode == "research_rag":
             # 从知识库检索相关内容
             kb_context = self.search_knowledge_base(user_text)
 
             # 如果有检索结果，拼接到用户消息中
             if kb_context:
-                enhanced_text = f"""【知识库资料】
+                enhanced_text = f"""【知识库检索内容开始】
             {kb_context}
+            【知识库检索内容结束】
 
             【用户问题】
             {user_text}
@@ -1019,8 +1054,8 @@ class MainWindowWidget(QMainWindow):
 
             # 恢复原始用户消息（用于保存历史）
             self.raw_message[-1]["content"] = user_text
-        elif self.current_mode == "research_desensitize":
-            self.DisplayMessage("system", "脱敏模式正在开发中...")
+        elif self.current_mode == "research_rag":
+            self.DisplayMessage("system", "欢迎使用本地知识库模式")
         elif self.current_mode == "research_local":
             self.CallbackLocalMode()
         elif self.current_mode == "code":
@@ -1202,7 +1237,7 @@ class MainWindowWidget(QMainWindow):
                 color = research_assistant_color
                 prefix = research_prefix_1
                 bg = research_bg_1
-            elif self.current_mode == "research_desensitize":
+            elif self.current_mode == "research_rag":
                 font_family = research_font_1
                 font_size = research_size_1
                 color = research_assistant_color
@@ -1315,7 +1350,7 @@ class MainWindowWidget(QMainWindow):
             mode_names = {
                 "chat": "💬 聊天模式",
                 "research_api": "📊 科研助手-在线",
-                "research_desensitize": "🔒 科研助手-脱敏",
+                "research_rag": "🔒 科研助手-线上结合本地知识库",
                 "research_local": "💻 科研助手-本地",
                 "code": "👨‍💻 代码助手",
             }

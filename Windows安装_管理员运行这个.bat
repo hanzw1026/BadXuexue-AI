@@ -108,6 +108,7 @@ set "PIP_INDEX=https://pypi.tuna.tsinghua.edu.cn/simple"
 %PYTHON_EXE% -m pip install PySide6 openai requests markdown python-dotenv pandas -i %PIP_INDEX%
 %PYTHON_EXE% -m pip install python-docx PyPDF2 pdf2image pytesseract pycryptodome -i %PIP_INDEX%
 %PYTHON_EXE% -m pip install chromadb sentence-transformers transformers torch -i %PIP_INDEX%
+%PYTHON_EXE% -m pip install openpyxl -i %PIP_INDEX%
 
 if errorlevel 1 (
     echo   Dependency install failed! Please check network.
