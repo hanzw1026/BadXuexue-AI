@@ -8,6 +8,7 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
+
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -19,6 +20,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QSlider, QSpacerItem,
     QVBoxLayout, QWidget)
+
 
 class Ui_docsSettingDialog(object):
     def setupUi(self, docsSettingDialog):
@@ -48,7 +50,7 @@ class Ui_docsSettingDialog(object):
         sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy1)
         font = QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -67,9 +69,7 @@ class Ui_docsSettingDialog(object):
         self.label_2.setObjectName(u"label_2")
         sizePolicy1.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy1)
-        font1 = QFont()
-        font1.setPointSize(16)
-        self.label_2.setFont(font1)
+        self.label_2.setFont(font)
 
         self.horizontalLayout.addWidget(self.label_2)
 
@@ -77,7 +77,7 @@ class Ui_docsSettingDialog(object):
         self.comb_provider_sel.setObjectName(u"comb_provider_sel")
         sizePolicy1.setHeightForWidth(self.comb_provider_sel.sizePolicy().hasHeightForWidth())
         self.comb_provider_sel.setSizePolicy(sizePolicy1)
-        self.comb_provider_sel.setFont(font1)
+        self.comb_provider_sel.setFont(font)
 
         self.horizontalLayout.addWidget(self.comb_provider_sel)
 
@@ -96,7 +96,7 @@ class Ui_docsSettingDialog(object):
         self.label_4.setObjectName(u"label_4")
         sizePolicy1.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy1)
-        self.label_4.setFont(font1)
+        self.label_4.setFont(font)
 
         self.horizontalLayout_4.addWidget(self.label_4)
 
@@ -104,7 +104,7 @@ class Ui_docsSettingDialog(object):
         self.comb_model_sel.setObjectName(u"comb_model_sel")
         sizePolicy1.setHeightForWidth(self.comb_model_sel.sizePolicy().hasHeightForWidth())
         self.comb_model_sel.setSizePolicy(sizePolicy1)
-        self.comb_model_sel.setFont(font1)
+        self.comb_model_sel.setFont(font)
 
         self.horizontalLayout_4.addWidget(self.comb_model_sel)
 
@@ -123,7 +123,7 @@ class Ui_docsSettingDialog(object):
         self.label_3.setObjectName(u"label_3")
         sizePolicy1.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy1)
-        self.label_3.setFont(font1)
+        self.label_3.setFont(font)
 
         self.horizontalLayout_3.addWidget(self.label_3)
 
@@ -186,7 +186,7 @@ class Ui_docsSettingDialog(object):
         self.label_6.setObjectName(u"label_6")
         sizePolicy1.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
         self.label_6.setSizePolicy(sizePolicy1)
-        self.label_6.setFont(font1)
+        self.label_6.setFont(font)
 
         self.horizontalLayout_6.addWidget(self.label_6)
 
@@ -202,7 +202,7 @@ class Ui_docsSettingDialog(object):
         self.label_temp_value.setObjectName(u"label_temp_value")
         sizePolicy1.setHeightForWidth(self.label_temp_value.sizePolicy().hasHeightForWidth())
         self.label_temp_value.setSizePolicy(sizePolicy1)
-        self.label_temp_value.setFont(font1)
+        self.label_temp_value.setFont(font)
         self.label_temp_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_6.addWidget(self.label_temp_value)
@@ -252,7 +252,7 @@ class Ui_docsSettingDialog(object):
         self.label_9.setObjectName(u"label_9")
         sizePolicy1.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
         self.label_9.setSizePolicy(sizePolicy1)
-        self.label_9.setFont(font1)
+        self.label_9.setFont(font)
 
         self.horizontalLayout_8.addWidget(self.label_9)
 
@@ -260,7 +260,7 @@ class Ui_docsSettingDialog(object):
         self.edit_template_dir.setObjectName(u"edit_template_dir")
         sizePolicy1.setHeightForWidth(self.edit_template_dir.sizePolicy().hasHeightForWidth())
         self.edit_template_dir.setSizePolicy(sizePolicy1)
-        self.edit_template_dir.setFont(font1)
+        self.edit_template_dir.setFont(font)
         self.edit_template_dir.setReadOnly(True)
 
         self.horizontalLayout_8.addWidget(self.edit_template_dir)
@@ -280,7 +280,7 @@ class Ui_docsSettingDialog(object):
         self.label_8.setObjectName(u"label_8")
         sizePolicy1.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
         self.label_8.setSizePolicy(sizePolicy1)
-        self.label_8.setFont(font1)
+        self.label_8.setFont(font)
 
         self.horizontalLayout_9.addWidget(self.label_8)
 
@@ -288,7 +288,7 @@ class Ui_docsSettingDialog(object):
         self.edit_output_dir.setObjectName(u"edit_output_dir")
         sizePolicy1.setHeightForWidth(self.edit_output_dir.sizePolicy().hasHeightForWidth())
         self.edit_output_dir.setSizePolicy(sizePolicy1)
-        self.edit_output_dir.setFont(font1)
+        self.edit_output_dir.setFont(font)
         self.edit_output_dir.setReadOnly(True)
 
         self.horizontalLayout_9.addWidget(self.edit_output_dir)

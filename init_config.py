@@ -3,12 +3,26 @@
 
 import os
 import sys
+import platform
 
 
 isInTestMode = True
 
 
+def get_platform_default_font_size():
+    """根据操作系统返回合适的默认字体大小"""
+    system = platform.system()
+    if system == "Windows":
+        return 13  # Windows 默认用 13 号
+    elif system == "Darwin":  # macOS
+        return 16  # macOS 用 16 号
+    else:  # Linux 或其他
+        return 14
+
+
 def get_default_env_content():
+    platform_default_size = get_platform_default_font_size()
+
     return '''# ==================== API 配置 ====================
 CHAT_ASSISTANT_API_KEY=
 CHAT_ASSISTANT_API_URL=https://api.deepseek.com
@@ -49,7 +63,7 @@ SYSTEM_CONFIG_RELOAD=✨ 配置已更新，新设置已生效。
 # ==================== 用户默认设置 ====================
 # 用户字体（留空为系统默认）
 USER_FONT_1=
-USER_SIZE_1=16
+USER_SIZE_1={platform_default_size}
 USER_COLOR_1=#FFFFFB
 USER_BG_1=
 
@@ -63,7 +77,7 @@ USER_PREFIX_CODE=👨‍💻用户：
 # ==================== 助手默认设置 ====================
 # 聊天模式助手字体
 ASSISTANT_FONT_1=
-ASSISTANT_SIZE_1=16
+ASSISTANT_SIZE_1={platform_default_size}
 ASSISTANT_COLOR_1=#FFFFFB
 ASSISTANT_BG_1=
 # 聊天对象昵称
@@ -73,38 +87,38 @@ CHAT_ASSISTANT_PROMPT="你是AI助手，提供专业、友好的回答。请用�
 
 # 科研助手
 RESEARCH_USER_FONT=""
-RESEARCH_USER_SIZE=16
+RESEARCH_USER_SIZE={platform_default_size}
 RESEARCH_USER_COLOR=#2E86AB
 RESEARCH_ASSISTANT_FONT=""
-RESEARCH_ASSISTANT_SIZE=16
+RESEARCH_ASSISTANT_SIZE={platform_default_size}
 RESEARCH_ASSISTANT_COLOR=#2E86AB
 
 # 代码助手
 CODE_USER_FONT=""
-CODE_USER_SIZE=16
+CODE_USER_SIZE={platform_default_size}
 CODE_USER_COLOR=#28A745
 CODE_ASSISTANT_FONT=""
-CODE_ASSISTANT_SIZE=16
+CODE_ASSISTANT_SIZE={platform_default_size}
 CODE_ASSISTANT_COLOR=#28A745
 
 # 文档助手
 DOCUMENT_USER_FONT=""
 DOCUMENT_ASSISTANT_FONT=""
-DOCUMENT_USER_SIZE=16
-DOCUMENT_ASSISTANT_SIZE=16
+DOCUMENT_USER_SIZE={platform_default_size}
+DOCUMENT_ASSISTANT_SIZE={platform_default_size}
 DOCUMENT_USER_COLOR=#2E86AB
 DOCUMENT_ASSISTANT_COLOR=#2E86AB
 
 # 系统消息
 SYSTEM_FONT_1=
-SYSTEM_SIZE_1=16
+SYSTEM_SIZE_1={platform_default_size}
 SYSTEM_COLOR_1=#FFFFFB
 SYSTEM_PREFIX_1=系统
 SYSTEM_STYLE_1=italic
 
 # 输入框
 INPUT_FONT_1=
-INPUT_SIZE_1=16
+INPUT_SIZE_1={platform_default_size}
 INPUT_COLOR_1=#FFFFFB
 INPUT_BG_1=#FFFFFF
 INPUT_PLACEHOLDER_COLOR_1=#EAE6CA

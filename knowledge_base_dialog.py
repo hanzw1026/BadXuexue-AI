@@ -17,6 +17,21 @@ from PySide6.QtGui import QDragEnterEvent, QDropEvent
 
 from knowledge_dialog_ui import Ui_Dialog
 import init_config
+import platform
+
+
+def get_platform_default_font_size():
+    """根据操作系统返回合适的默认字体大小"""
+    system = platform.system()
+    if system == "Windows":
+        return 13
+    elif system == "Darwin":  # macOS
+        return 16
+    else:  # Linux 或其他
+        return 14
+
+
+DEFAULT_FONT_SIZE = get_platform_default_font_size()
 
 
 class UIUpdateThread(QThread):
@@ -45,6 +60,19 @@ class IndexProgressDialog(QDialog):
     """索引进度对话框"""
 
     def __init__(self, total_files, parent=None):
+        # 高DPI适配：让Qt自己控制
+        if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+            QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, False)
+            QApplication.setAttribute(Qt.AA_DisableHighDpiScaling, True)
+        super().__init__(parent)
+        self.setupUi(self)
+
+        # ===== 设置整个对话框的默认字体 =====
+        from PySide6.QtGui import QFont
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        self.setFont(font)
+
         super().__init__(parent)
         self.setWindowTitle("正在建立索引")
         self.setModal(True)
@@ -71,7 +99,7 @@ class IndexProgressDialog(QDialog):
 
         # 计时器显示
         self.label_timer = QLabel("已用时: 0 秒")
-        self.label_timer.setStyleSheet("font-weight: bold; font-size: 14px;")
+        self.label_timer.setStyleSheet("font-weight: bold; font-size: {DEFAULT_FONT_SIZE}px;")
         self.label_timer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.label_timer)
 
@@ -233,6 +261,13 @@ class KnowledgeBaseDialog(QDialog, Ui_Dialog):
             QApplication.setAttribute(Qt.AA_DisableHighDpiScaling, True)
         super().__init__(parent)
         self.setupUi(self)
+
+        # ===== 设置整个对话框的默认字体 =====
+        from PySide6.QtGui import QFont
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        self.setFont(font)
+
         self.model = None
 
         # 启用拖拽

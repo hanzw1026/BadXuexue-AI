@@ -36,6 +36,20 @@ chat_mode_model_name = "deepseek-v4-flash"
 research_mode_model_name = "deepseek-v4-pro"
 
 
+def get_platform_default_font_size():
+    """根据操作系统返回合适的默认字体大小"""
+    system = platform.system()
+    if system == "Windows":
+        return 13
+    elif system == "Darwin":  # macOS
+        return 16
+    else:  # Linux 或其他
+        return 14
+
+
+DEFAULT_FONT_SIZE = get_platform_default_font_size()
+
+
 def resource_path(relative_path):
     """获取打包后资源的绝对路径
 
@@ -166,21 +180,21 @@ if isInTestMode:
 
 # ---------- 科研助手 ----------
 research_font_1 = os.getenv("RESEARCH_USER_FONT", ".AppleSystemUIFont")
-research_size_1 = int(os.getenv("RESEARCH_USER_SIZE", 16))
+research_size_1 = int(os.getenv("RESEARCH_USER_SIZE", DEFAULT_FONT_SIZE))
 research_color_1 = os.getenv("RESEARCH_USER_COLOR", "#2E86AB")  # 科研用户颜色
 research_assistant_color = os.getenv("RESEARCH_ASSISTANT_COLOR", "#2E86AB")  # 科研助手颜色 ✅ 新增
 research_bg_1 = os.getenv("RESEARCH_BG", "")
 
 # ---------- 代码助手 ----------
 code_font_1 = os.getenv("CODE_USER_FONT", ".AppleSystemUIFont")
-code_size_1 = int(os.getenv("CODE_USER_SIZE", 16))
+code_size_1 = int(os.getenv("CODE_USER_SIZE", DEFAULT_FONT_SIZE))
 code_color_1 = os.getenv("CODE_USER_COLOR", "#28A745")  # 代码用户颜色
 code_assistant_color = os.getenv("CODE_ASSISTANT_COLOR", "#28A745")  # 代码助手颜色 ✅ 新增
 code_bg_1 = os.getenv("CODE_BG", "")
 
 # ---------- 用户字体/颜色/前缀 ----------
 user_font_1 = os.getenv("USER_FONT_1", ".AppleSystemUIFont")
-user_size_1 = int(os.getenv("USER_SIZE_1", 16))
+user_size_1 = int(os.getenv("USER_SIZE_1", DEFAULT_FONT_SIZE))
 user_color_1 = os.getenv("USER_COLOR_1", "#FFB6C1")
 user_bg_1 = os.getenv("USER_BG_1", "")
 
@@ -190,7 +204,7 @@ user_prefix_code = os.getenv("USER_PREFIX_CODE", "用户")
 
 # ---------- 猫娘姐姐 ----------
 assistant_font_1 = os.getenv("ASSISTANT_FONT_1", ".AppleSystemUIFont")
-assistant_size_1 = int(os.getenv("ASSISTANT_SIZE_1", 16))
+assistant_size_1 = int(os.getenv("ASSISTANT_SIZE_1", DEFAULT_FONT_SIZE))
 assistant_color_1 = os.getenv("ASSISTANT_COLOR_1", "#D8BFD8")
 assistant_prefix_1 = os.getenv("ASSISTANT_PREFIX", "助手：")
 assistant_bg_1 = os.getenv("ASSISTANT_BG_1", "")
@@ -198,7 +212,7 @@ chat_assistant_prompt = os.getenv("CHAT_ASSISTANT_PROMPT", "")
 
 # ---------- 科研助理 ----------
 research_font_1 = os.getenv("RESEARCH_FONT", ".AppleSystemUIFont")
-research_size_1 = int(os.getenv("RESEARCH_SIZE", 16))
+research_size_1 = int(os.getenv("RESEARCH_SIZE", DEFAULT_FONT_SIZE))
 research_color_1 = os.getenv("RESEARCH_COLOR", "#2E86AB")
 research_bg_1 = os.getenv("RESEARCH_BG", "")
 
@@ -208,7 +222,7 @@ research_prefix_3 = os.getenv("RESEARCH_PREFIX_3", "📊科研助理-本地模�
 
 # ---------- 代码助手 ----------
 code_font_1 = os.getenv("CODE_FONT", ".AppleSystemUIFont")
-code_size_1 = int(os.getenv("CODE_SIZE", 16))
+code_size_1 = int(os.getenv("CODE_SIZE", DEFAULT_FONT_SIZE))
 code_color_1 = os.getenv("CODE_COLOR", "#28A745")
 code_prefix_1 = os.getenv("CODE_PREFIX", "👨‍💻代码助手：")
 code_bg_1 = os.getenv("CODE_BG", "")
@@ -216,14 +230,14 @@ code_assistant_prompt = os.getenv("CODE_ASSISTANT_PROMPT", "")
 
 # ---------- 系统消息 ----------
 system_font_1 = os.getenv("SYSTEM_FONT_1", ".AppleSystemUIFont")
-system_size_1 = int(os.getenv("SYSTEM_SIZE_1", 16))
+system_size_1 = int(os.getenv("SYSTEM_SIZE_1", DEFAULT_FONT_SIZE))
 system_color_1 = os.getenv("SYSTEM_COLOR_1", "#999999")
 system_prefix_1 = os.getenv("SYSTEM_PREFIX_1", "系统")
 system_style = os.getenv("SYSTEM_STYLE_1", "italic")
 
 # ---------- 输入框 ----------
 input_font_1 = os.getenv("INPUT_FONT_1", ".AppleSystemUIFont")
-input_size_1 = int(os.getenv("INPUT_SIZE_1", 16))
+input_size_1 = int(os.getenv("INPUT_SIZE_1", DEFAULT_FONT_SIZE))
 input_color_1 = os.getenv("INPUT_COLOR_1", "#333333")
 input_bg_1 = os.getenv("INPUT_BG_1", "#FFFFFF")
 input_placeholder_color_1 = os.getenv("INPUT_PLACEHOLDER_COLOR_1", "#999999")
@@ -1559,14 +1573,14 @@ class MainWindowWidget(QMainWindow):
 
         # ===== 聊天模式 =====
         user_font_1 = os.getenv("USER_FONT_1", "").strip('"')
-        user_size_1 = int(os.getenv("USER_SIZE_1", 16))
+        user_size_1 = int(os.getenv("USER_SIZE_1", DEFAULT_FONT_SIZE))
         user_color_1 = os.getenv("USER_COLOR_1", "#3C3C3C")
         user_bg_1 = os.getenv("USER_BG_1", "")
 
         user_prefix_chat = os.getenv("USER_PREFIX_CHAT", "用户：")
 
         assistant_font_1 = os.getenv("ASSISTANT_FONT_1", "").strip('"')
-        assistant_size_1 = int(os.getenv("ASSISTANT_SIZE_1", 16))
+        assistant_size_1 = int(os.getenv("ASSISTANT_SIZE_1", DEFAULT_FONT_SIZE))
         assistant_color_1 = os.getenv("ASSISTANT_COLOR_1", "#0078D7")
         assistant_bg_1 = os.getenv("ASSISTANT_BG_1", "")
         assistant_prefix_1 = os.getenv("ASSISTANT_PREFIX", "助手：")
@@ -1576,7 +1590,7 @@ class MainWindowWidget(QMainWindow):
         user_prefix_research = os.getenv("USER_PREFIX_RESEARCH", "📊用户：")
 
         research_font_1 = os.getenv("RESEARCH_USER_FONT", "").strip('"')
-        research_size_1 = int(os.getenv("RESEARCH_USER_SIZE", 16))
+        research_size_1 = int(os.getenv("RESEARCH_USER_SIZE", DEFAULT_FONT_SIZE))
         research_color_1 = os.getenv("RESEARCH_USER_COLOR", "#2E86AB")  # 科研用户颜色
         research_assistant_color = os.getenv("RESEARCH_ASSISTANT_COLOR", "#2E86AB")  # ✅ 科研助手颜色
         research_bg_1 = os.getenv("RESEARCH_BG", "")
@@ -1590,7 +1604,7 @@ class MainWindowWidget(QMainWindow):
         user_prefix_code = os.getenv("USER_PREFIX_CODE", "👨‍💻用户：")
 
         code_font_1 = os.getenv("CODE_USER_FONT", "").strip('"')
-        code_size_1 = int(os.getenv("CODE_USER_SIZE", 16))
+        code_size_1 = int(os.getenv("CODE_USER_SIZE", DEFAULT_FONT_SIZE))
         code_color_1 = os.getenv("CODE_USER_COLOR", "#28A745")  # 代码用户颜色
         code_assistant_color = os.getenv("CODE_ASSISTANT_COLOR", "#28A745")  # ✅ 代码助手颜色
         code_bg_1 = os.getenv("CODE_BG", "")
@@ -1600,13 +1614,13 @@ class MainWindowWidget(QMainWindow):
 
         # 系统消息
         system_font_1 = os.getenv("SYSTEM_FONT_1", "").strip('"')
-        system_size_1 = int(os.getenv("SYSTEM_SIZE_1", 16))
+        system_size_1 = int(os.getenv("SYSTEM_SIZE_1", DEFAULT_FONT_SIZE))
         system_color_1 = os.getenv("SYSTEM_COLOR_1", "#999999")
         system_prefix_1 = os.getenv("SYSTEM_PREFIX_1", "系统")
         system_style = os.getenv("SYSTEM_STYLE_1", "italic")
 
         input_font_1 = os.getenv("INPUT_FONT_1", "").strip('"')
-        input_size_1 = int(os.getenv("INPUT_SIZE_1", 16))
+        input_size_1 = int(os.getenv("INPUT_SIZE_1", DEFAULT_FONT_SIZE))
         input_color_1 = os.getenv("INPUT_COLOR_1", "#333333")
         input_bg_1 = os.getenv("INPUT_BG_1", "#FFFFFF")
         input_placeholder_color_1 = os.getenv("INPUT_PLACEHOLDER_COLOR_1", "#999999")

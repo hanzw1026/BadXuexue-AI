@@ -3,11 +3,25 @@
 
 import os
 import re
-from PySide6.QtWidgets import QDialog, QMessageBox, QColorDialog, QFileDialog, QApplication
+from PySide6.QtWidgets import QDialog, QMessageBox, QColorDialog, QFileDialog, QApplication, QLineEdit, QLabel, QPushButton, QComboBox, QFontComboBox
 from PySide6.QtCore import Qt
 
 from setting_dialog_ui import Ui_SettingDialog
 import init_config
+import platform
+
+
+def get_platform_default_font_size():
+    system = platform.system()
+    if system == "Windows":
+        return 11
+    elif system == "Darwin":
+        return 13
+    else:
+        return 12
+
+
+DEFAULT_FONT_SIZE = get_platform_default_font_size()
 
 
 class SettingDialog(QDialog, Ui_SettingDialog):
@@ -19,6 +33,13 @@ class SettingDialog(QDialog, Ui_SettingDialog):
 
         super().__init__(parent)
         self.setupUi(self)
+
+        # ===== 设置整个对话框的默认字体 =====
+        from PySide6.QtGui import QFont
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        self.setFont(font)
+
         self.color_values = {}
 
         self.init_font_sizes()
@@ -72,6 +93,35 @@ class SettingDialog(QDialog, Ui_SettingDialog):
     def _do_refresh_ui(self):
         """实际执行 UI 刷新"""
         from PySide6.QtGui import QFont
+
+        # 获取基础字体（用于覆盖硬编码控件）
+        base_font = QFont()
+        base_font.setPointSize(DEFAULT_FONT_SIZE)
+
+        # 覆盖 Tab 标题的硬编码字体
+        for i in range(self.tab_setting.count()):
+            tab_title = self.tab_setting.tabText(i)
+            # 设置标签栏字体
+            self.tab_setting.tabBar().setFont(base_font)
+
+        from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QComboBox, QFontComboBox
+
+        widget_types = [QLabel, QLineEdit, QPushButton, QComboBox, QFontComboBox]
+        for widget_type in widget_types:
+            for widget in self.findChildren(widget_type):
+                # 跳过颜色按钮（保留原有样式）
+                if isinstance(widget, QPushButton) and widget.objectName().startswith("btn_"):
+                    continue
+                widget.setFont(base_font)
+
+        self.tab_setting.setStyleSheet(f"""
+            QTabWidget::tab-bar {{
+                font-size: {DEFAULT_FONT_SIZE}px;
+            }}
+            QTabBar::tab {{
+                font-size: {DEFAULT_FONT_SIZE}px;
+            }}
+        """)
 
         # ========== 1. API 设置 ==========
         self.edit_chat_api_key.setText(self.chat_api_key)

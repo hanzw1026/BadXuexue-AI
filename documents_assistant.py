@@ -16,6 +16,20 @@ from documentsAssistantWidget import Ui_DocumentAssistantWindow
 from docs_setting_dialog import DocsSettingDialog
 from PySide6.QtCore import QThread, Signal
 from init_config import load_doc_assistant_config
+import platform
+
+
+def get_platform_default_font_size():
+    system = platform.system()
+    if system == "Windows":
+        return 13
+    elif system == "Darwin":
+        return 16
+    else:
+        return 14
+
+
+DEFAULT_FONT_SIZE = get_platform_default_font_size()
 
 
 # 跨平台路径处理
@@ -69,6 +83,12 @@ class DocumentAssistantWindow(QWidget):
         super().__init__(parent)
         self.ui = Ui_DocumentAssistantWindow()
         self.ui.setupUi(self)
+
+        # 设置整个窗口的默认字体
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        self.setFont(font)
+
         self.setWindowFlags(Qt.Window)
 
         # 跨平台目录设置
@@ -88,6 +108,13 @@ class DocumentAssistantWindow(QWidget):
         # 初始化界面
         self.init_ui()
         self.init_signals()
+
+        self.ui.combo_format.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
+        self.ui.btn_upload_template.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
+        self.ui.btn_delete_template.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
+        self.ui.btn_generate.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
+        self.ui.btn_clear.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
+        self.ui.btn_settings.setStyleSheet(f"font-size: {DEFAULT_FONT_SIZE}pt;")
 
         # 加载数据
         self.load_templates()
@@ -115,7 +142,7 @@ class DocumentAssistantWindow(QWidget):
                     }
                     .placeholder {
                         text-align: center;
-                        font-size: 14px;
+                        font-size: {DEFAULT_FONT_SIZE - 2}pt;
                     }
                 </style>
             </head>
@@ -141,17 +168,13 @@ class DocumentAssistantWindow(QWidget):
         self.ui.combo_format.clear()
         self.ui.combo_format.addItems(["Word (.docx)", "Excel (.xlsx)", "PPT (.pptx)"])
 
-        # 设置输入框字体
-        font = QFont()
-        font.setPointSize(16)
-        self.ui.edit_prompt.setFont(font)
-
         # ===== 根据暗黑模式设置输入框样式 =====
         if self.isInDarkMode:
             self.ui.edit_prompt.setStyleSheet("""
                 QTextEdit {
                     background-color: #3c3c3c;
                     color: #FFFFFB;
+                    font-size: {DEFAULT_FONT_SIZE}pt;
                     border: 1px solid #555;
                     border-radius: 4px;
                     padding: 8px;
@@ -164,6 +187,7 @@ class DocumentAssistantWindow(QWidget):
                 QTextEdit {
                     background-color: #ffffff;
                     color: #333333;
+                    font-size: {DEFAULT_FONT_SIZE}pt;
                     border: 1px solid #ccc;
                     border-radius: 4px;
                     padding: 8px;
@@ -195,9 +219,9 @@ class DocumentAssistantWindow(QWidget):
         # 标题标签（根据暗黑模式设置颜色）
         title_label = QLabel(title)
         if self.isInDarkMode:
-            title_label.setStyleSheet("color: #e0e0e0; font-weight: bold; font-size: 12px;")
+            title_label.setStyleSheet("color: #e0e0e0; font-weight: bold; font-size: {DEFAULT_FONT_SIZE}pt;")
         else:
-            title_label.setStyleSheet("color: #333; font-weight: bold; font-size: 12px;")
+            title_label.setStyleSheet("color: #333; font-weight: bold; font-size: {DEFAULT_FONT_SIZE}pt;")
         zoom_layout.addWidget(title_label)
 
         zoom_layout.addStretch()
@@ -208,7 +232,7 @@ class DocumentAssistantWindow(QWidget):
                 QPushButton {
                     background-color: #555555;
                     color: white;
-                    font-size: 14px;
+                    font-size: {DEFAULT_FONT_SIZE}pt;
                     font-weight: bold;
                     border: none;
                     border-radius: 4px;
@@ -223,13 +247,13 @@ class DocumentAssistantWindow(QWidget):
                     background-color: #444444;
                 }
             """
-            label_style = "color: #e0e0e0; font-size: 11px;"
+            label_style = "color: #e0e0e0; font-size: {DEFAULT_FONT_SIZE}pt;"
         else:
             btn_style = """
                 QPushButton {
                     background-color: #f0f0f0;
                     color: #333;
-                    font-size: 14px;
+                    font-size: {DEFAULT_FONT_SIZE}pt;
                     font-weight: bold;
                     border: 1px solid #ccc;
                     border-radius: 4px;
@@ -241,7 +265,7 @@ class DocumentAssistantWindow(QWidget):
                     background-color: #e0e0e0;
                 }
             """
-            label_style = "color: #666; font-size: 11px;"
+            label_style = "color: #666; font-size: {DEFAULT_FONT_SIZE}pt;"
 
         # 缩小按钮
         btn_zoom_out = QPushButton("−")
@@ -548,7 +572,7 @@ class DocumentAssistantWindow(QWidget):
                 <style>
                     body {{
                         font-family: '微软雅黑', '宋体', Arial, sans-serif;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         padding: 20px;
                         margin: 0;
                         line-height: 1.4;
@@ -558,7 +582,7 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #666;
                     }}
                     h4 {{
@@ -708,7 +732,7 @@ class DocumentAssistantWindow(QWidget):
                     .excel-table {{
                         border-collapse: collapse;
                         width: 100%;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                     }}
                     .excel-table th {{
                         background-color: #f2f2f2;
@@ -736,7 +760,7 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #666;
                     }}
                 </style>
@@ -830,7 +854,7 @@ class DocumentAssistantWindow(QWidget):
                 <style>
                     body {{
                         font-family: '微软雅黑', '宋体', Arial, sans-serif;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         padding: 20px;
                         margin: 0;
                         line-height: 1.4;
@@ -842,7 +866,7 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #aaa;
                         border: 1px solid #3d3d3d;
                     }}
@@ -995,7 +1019,7 @@ class DocumentAssistantWindow(QWidget):
                     .excel-table {{
                         border-collapse: collapse;
                         width: 100%;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                     }}
                     .excel-table th {{
                         background-color: #f2f2f2;
@@ -1023,7 +1047,7 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #666;
                     }}
                 </style>
@@ -1085,7 +1109,7 @@ class DocumentAssistantWindow(QWidget):
                     .excel-table {{
                         border-collapse: collapse;
                         width: 100%;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         background-color: #252525;
                     }}
                     .excel-table th {{
@@ -1116,7 +1140,7 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #aaa;
                         border: 1px solid #3d3d3d;
                     }}
@@ -1348,7 +1372,7 @@ class DocumentAssistantWindow(QWidget):
                         to { transform: rotate(360deg); }
                     }
                     .wait-text {
-                        font-size: 14px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #aaa;
                     }
                 </style>
@@ -1430,13 +1454,13 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #666;
                     }}
                     table {{
                         border-collapse: collapse;
                         width: 100%;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                     }}
                     th {{
                         background-color: #f2f2f2;
@@ -1507,11 +1531,11 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #666;
                     }}
                     .content {{
-                        font-size: 14px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                     }}
                 </style>
             </head>
@@ -1565,14 +1589,14 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #aaa;
                         border: 1px solid #3d3d3d;
                     }}
                     table {{
                         border-collapse: collapse;
                         width: 100%;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         background-color: #252525;
                     }}
                     th {{
@@ -1650,12 +1674,12 @@ class DocumentAssistantWindow(QWidget):
                         padding: 8px;
                         margin-bottom: 10px;
                         border-radius: 4px;
-                        font-size: 12px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         color: #aaa;
                         border: 1px solid #3d3d3d;
                     }}
                     .content {{
-                        font-size: 14px;
+                        font-size: {DEFAULT_FONT_SIZE-4}pt;
                         background-color: #252525;
                         padding: 15px;
                         border-radius: 4px;

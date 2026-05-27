@@ -12,6 +12,20 @@ from init_config import (
     load_doc_assistant_config,
     save_doc_assistant_config
 )
+import platform
+
+
+def get_platform_default_font_size():
+    system = platform.system()
+    if system == "Windows":
+        return 11
+    elif system == "Darwin":
+        return 13
+    else:
+        return 12
+
+
+DEFAULT_FONT_SIZE = get_platform_default_font_size()
 
 
 class DocsSettingDialog(QDialog):
@@ -23,6 +37,19 @@ class DocsSettingDialog(QDialog):
         # 创建 UI 实例并设置界面
         self.ui = Ui_docsSettingDialog()
         self.ui.setupUi(self)
+        # ===== 设置整个对话框的默认字体 =====
+        from PySide6.QtGui import QFont
+        import platform
+
+        def get_font_size():
+            if platform.system() == "Windows":
+                return 11
+            else:
+                return 13
+
+        font = QFont()
+        font.setPointSize(get_font_size())
+        self.setFont(font)
 
         self.setModal(True)
         self.setWindowTitle("文档助手设置")
@@ -41,6 +68,40 @@ class DocsSettingDialog(QDialog):
 
     def _init_ui(self):
         """初始化界面组件"""
+        # 覆盖 UI 文件中硬编码的字体大小
+        from PySide6.QtGui import QFont
+        import platform
+
+        def get_font_size():
+            if platform.system() == "Windows":
+                return 11
+            else:
+                return 13
+
+        base_font = QFont()
+        base_font.setPointSize(get_font_size())
+
+        # 覆盖标题字体（原 20 号）
+        title_font = QFont()
+        title_font.setPointSize(get_font_size() + 2)  # 标题可以稍大一点
+        self.ui.label.setFont(title_font)
+
+        # 覆盖其他控件的字体
+        for widget in [self.ui.label_2, self.ui.label_4, self.ui.label_3,
+                       self.ui.label_6, self.ui.label_9, self.ui.label_8,
+                       self.ui.comb_provider_sel, self.ui.comb_model_sel,
+                       self.ui.edit_api_key_input, self.ui.edit_template_dir,
+                       self.ui.edit_output_dir, self.ui.label_temp_value]:
+            widget.setFont(base_font)
+
+        # 覆盖 UI 文件中硬编码的标题字体（20pt → 使用默认大小）
+        base_font = QFont()
+        base_font.setPointSize(DEFAULT_FONT_SIZE)
+
+        self.ui.label.setFont(base_font)  # API配置
+        self.ui.label_5.setFont(base_font)  # 生成设置
+        self.ui.label_7.setFont(base_font)  # 路径设置
+
         # 服务商下拉选项
         self.ui.comb_provider_sel.addItems([
             "通义千问 (Qwen)",
