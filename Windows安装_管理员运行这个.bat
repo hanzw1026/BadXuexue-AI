@@ -108,7 +108,7 @@ set "PIP_INDEX=https://pypi.tuna.tsinghua.edu.cn/simple"
 %PYTHON_EXE% -m pip install PySide6 openai requests markdown python-dotenv pandas -i %PIP_INDEX%
 %PYTHON_EXE% -m pip install python-docx PyPDF2 pdf2image pytesseract pycryptodome -i %PIP_INDEX%
 %PYTHON_EXE% -m pip install chromadb sentence-transformers transformers torch -i %PIP_INDEX%
-%PYTHON_EXE% -m pip install openpyxl -i %PIP_INDEX%
+%PYTHON_EXE% -m pip install openpyxl python-pptx -i %PIP_INDEX%
 
 if errorlevel 1 (
     echo   Dependency install failed! Please check network.
@@ -116,17 +116,6 @@ if errorlevel 1 (
     exit /b 1
 )
 echo   Dependencies installed
-
-REM ========== 6. Download AI Model ==========
-echo.
-echo [6/7] Downloading AI Model...
-%PYTHON_EXE% -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('BAAI/bge-small-zh'); model.save('_model/bge-small-zh')"
-
-if exist "%APP_DIR%_model\bge-small-zh" (
-    echo   AI Model downloaded
-) else (
-    echo   Model download may have failed, will try on first run
-)
 
 REM ========== 7. Create launcher and shortcut ==========
 echo.

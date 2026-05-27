@@ -242,3 +242,139 @@ def get_config_message(is_first_run, has_api_keys):
     else:
         return None
 
+
+def get_doc_assistant_env_path():
+    """获取文档助手配置文件路径"""
+    internal_dir = get_internal_dir()
+    return os.path.join(internal_dir, 'AI_doc_assistant.env')
+
+
+def get_default_doc_assistant_env_content():
+    """获取文档助手默认配置内容"""
+    return '''# ==================== 文档助手配置 ====================
+# 服务商选择：qwen / doubao / deepseek
+DOC_ASSISTANT_PROVIDER=qwen
+
+# API Key（根据选择的服务商填写）
+DOC_ASSISTANT_API_KEY=
+
+# 模型名称
+DOC_ASSISTANT_MODEL=qwen-max
+
+# 温度参数（0-1，越高越随机）
+DOC_ASSISTANT_TEMPERATURE=0.7
+
+# 输出目录
+DOC_ASSISTANT_OUTPUT_DIR=./outputs
+
+# 模板目录
+DOC_ASSISTANT_TEMPLATE_DIR=./docs_template
+'''
+
+
+def ensure_doc_assistant_config_exists():
+    """确保文档助手配置文件存在，不存在则创建"""
+    env_path = get_doc_assistant_env_path()
+    internal_dir = get_internal_dir()
+    os.makedirs(internal_dir, exist_ok=True)
+
+    is_first_run = False
+
+    if not os.path.exists(env_path):
+        try:
+            with open(env_path, 'w', encoding='utf-8') as f:
+                f.write(get_default_doc_assistant_env_content())
+            is_first_run = True
+            if isInTestMode:
+                print(f"📝 首次运行，正在创建文档助手配置文件: {env_path}")
+        except Exception as e:
+            if isInTestMode:
+                print(f"❌ 文档助手配置文件创建失败: {e}")
+            return None, False
+
+    return env_path, is_first_run
+
+
+def load_doc_assistant_config():
+    """加载文档助手配置，返回字典"""
+    import re
+    env_path = get_doc_assistant_env_path()
+
+    # 确保文件存在
+    ensure_doc_assistant_config_exists()
+
+    config = {
+        "provider": "qwen",
+        "api_key": "",
+        "model": "qwen-max",
+        "temperature": 0.7,
+        "output_dir": "./outputs",
+        "template_dir": "./docs_template"
+    }
+
+    try:
+        with open(env_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        patterns = {
+            "provider": r'DOC_ASSISTANT_PROVIDER=(.+)',
+            "api_key": r'DOC_ASSISTANT_API_KEY=(.+)',
+            "model": r'DOC_ASSISTANT_MODEL=(.+)',
+            "temperature": r'DOC_ASSISTANT_TEMPERATURE=(.+)',
+            "output_dir": r'DOC_ASSISTANT_OUTPUT_DIR=(.+)',
+            "template_dir": r'DOC_ASSISTANT_TEMPLATE_DIR=(.+)',
+        }
+
+        for key, pattern in patterns.items():
+            match = re.search(pattern, content)
+            if match:
+                value = match.group(1).strip()
+                if value and not value.startswith('#'):
+                    if key == "temperature":
+                        try:
+                            config[key] = float(value)
+                        except:
+                            pass
+                    else:
+                        config[key] = value
+    except Exception as e:
+        if isInTestMode:
+            print(f"⚠️ 加载文档助手配置失败: {e}")
+
+    return config
+
+
+def save_doc_assistant_config(config):
+    """保存文档助手配置到 .env 文件"""
+    env_path = get_doc_assistant_env_path()
+
+    content = f'''# ==================== 文档助手配置 ====================
+# 服务商选择：qwen / doubao / deepseek
+DOC_ASSISTANT_PROVIDER={config.get("provider", "qwen")}
+
+# API Key（根据选择的服务商填写）
+DOC_ASSISTANT_API_KEY={config.get("api_key", "")}
+
+# 模型名称
+DOC_ASSISTANT_MODEL={config.get("model", "qwen-max")}
+
+# 温度参数（0-1，越高越随机）
+DOC_ASSISTANT_TEMPERATURE={config.get("temperature", 0.7)}
+
+# 输出目录
+DOC_ASSISTANT_OUTPUT_DIR={config.get("output_dir", "./outputs")}
+
+# 模板目录
+DOC_ASSISTANT_TEMPLATE_DIR={config.get("template_dir", "./docs_template")}
+'''
+
+    try:
+        with open(env_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        if isInTestMode:
+            print(f"✅ 文档助手配置已保存: {env_path}")
+        return True
+    except Exception as e:
+        if isInTestMode:
+            print(f"❌ 保存文档助手配置失败: {e}")
+        return False

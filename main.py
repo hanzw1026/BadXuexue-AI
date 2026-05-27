@@ -35,6 +35,7 @@ isInTestMode = init_config.isInTestMode
 chat_mode_model_name = "deepseek-v4-flash"
 research_mode_model_name = "deepseek-v4-pro"
 
+
 def resource_path(relative_path):
     """获取打包后资源的绝对路径
 
@@ -202,7 +203,7 @@ research_color_1 = os.getenv("RESEARCH_COLOR", "#2E86AB")
 research_bg_1 = os.getenv("RESEARCH_BG", "")
 
 research_prefix_1 = os.getenv("RESEARCH_PREFIX_1", "📊科研助理-在线模式：")
-research_prefix_2 = os.getenv("RESEARCH_PREFIX_2", "📊科研助理-脱敏模式：")
+research_prefix_2 = os.getenv("RESEARCH_PREFIX_2", "📊科研助理-知识库模式：")
 research_prefix_3 = os.getenv("RESEARCH_PREFIX_3", "📊科研助理-本地模式：")
 
 # ---------- 代码助手 ----------
@@ -266,6 +267,8 @@ class MainWindowWidget(QMainWindow):
         self.current_mode = "chat"  # 默认进入聊天模式
         self.stream_mode = is_stream_mode  # 是否流式传输
         self.current_file_content = None  # 存储上传文件的内容
+        self.uploaded_files = []  # 存储多个文件的信息 [{"path": xxx, "content": xxx, "name": xxx}]
+
         self.is_calculating = False  # 是否正在计算
         # 知识库引用（懒加载）
         self.kb_dialog = None
@@ -369,6 +372,8 @@ class MainWindowWidget(QMainWindow):
         self.ui0.btn_mode_sel_3.clicked.connect(lambda: self.SwitchMode("research_rag"))
         self.ui0.btn_mode_sel_4.clicked.connect(lambda: self.SwitchMode("research_local"))
         self.ui0.btn_mode_sel_5.clicked.connect(lambda: self.SwitchMode("code"))
+        self.ui0.btn_mode_sel_6.clicked.connect(self.open_doc_assistant)
+
         self.ui0.btn_upload_file.clicked.connect(self.UploadFile)
         self.current_file_path = None  # 记录当前上传的文件
         self.ui0.btn_sys_setting.clicked.connect(self.open_setting_dialog)
@@ -378,6 +383,32 @@ class MainWindowWidget(QMainWindow):
         self.network_timer = QTimer()
         self.network_timer.timeout.connect(self.check_network)
         self.network_timer.start(30000)  # 每30秒检测一次
+
+    def open_doc_assistant(self):
+        """打开文档助手窗口"""
+        from documents_assistant import DocumentAssistantWindow
+        if not hasattr(self, 'doc_assistant_window'):
+            self.doc_assistant_window = DocumentAssistantWindow(self)
+        self.doc_assistant_window.show()
+        self.doc_assistant_window.raise_()
+
+    def open_doc_assistant_threaded(self):
+        """在新线程中打开文档助手窗口"""
+        import threading
+        from documents_assistant import DocumentAssistantWindow
+
+        def run():
+            # 在新线程中创建并运行窗口
+            self.doc_assistant_window = DocumentAssistantWindow()
+            self.doc_assistant_window.show()
+            # 启动事件循环（PySide6的QWidget需要事件循环，在新线程中需要额外处理）
+            self.doc_assistant_window.exec_()  # 如果DocumentAssistantWindow是QDialog
+            # 如果是QWidget，则需要：
+            # app = QApplication.instance()
+            # app.exec_()  # 但通常不需要
+
+        thread = threading.Thread(target=run, daemon=True)
+        thread.start()
 
     def search_knowledge_base(self, query, top_k=3):
         """从知识库检索相关内容"""
@@ -507,12 +538,32 @@ class MainWindowWidget(QMainWindow):
             # 网络异常，显示离线状态
             self.update_system_info("offline")
 
+    # def UploadFile(self):
+    #     file_path, _ = QFileDialog.getOpenFileName(
+    #         self,
+    #         "选择文件",
+    #         "",
+    #         "所有文件 (*);;图片 (*.png *.jpg *.jpeg *.gif);;文档 (*.pdf *.docx *.txt);;表格 (*.xlsx *.xls)")
+    #
+    #     if not file_path:
+    #         return
+    #
+    #     file_name = os.path.basename(file_path)
+    #     file_size = os.path.getsize(file_path)
+    #
+    #     # 在聊天框里显示文件上传成功的系统消息
+    #     self.DisplayMessage("system", f"已上传文件：{file_name} ({file_size} 字节)\n你可以输入指令让我处理这个文件。")
+    #
+    #     # 保存文件路径
+    #     self.current_file_path = file_path
+
     def UploadFile(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             "选择文件",
             "",
-            "所有文件 (*);;图片 (*.png *.jpg *.jpeg *.gif);;文档 (*.pdf *.docx *.txt);;表格 (*.xlsx *.xls)")
+            "所有文件 (*);;图片 (*.png *.jpg *.jpeg *.gif);;文档 (*.pdf *.docx *.txt);;表格 (*.xlsx *.xls)"
+        )
 
         if not file_path:
             return
@@ -520,11 +571,47 @@ class MainWindowWidget(QMainWindow):
         file_name = os.path.basename(file_path)
         file_size = os.path.getsize(file_path)
 
-        # 在聊天框里显示文件上传成功的系统消息
-        self.DisplayMessage("system", f"已上传文件：{file_name} ({file_size} 字节)\n你可以输入指令让我处理这个文件。")
+        # 读取文件内容
+        try:
+            file_content = self._read_file_content(file_path)
+            # 存储到列表中
+            self.uploaded_files.append({
+                "path": file_path,
+                "name": file_name,
+                "size": file_size,
+                "content": file_content
+            })
 
-        # 保存文件路径
-        self.current_file_path = file_path
+            # 在聊天框里显示文件上传成功的系统消息
+            self.DisplayMessage("system", f"✅ 已上传文件：{file_name} ({file_size} 字节)\n当前共上传 {len(self.uploaded_files)} 个文件\n\n你可以输入指令让我处理这些文件。")
+
+        except Exception as e:
+            self.DisplayMessage("system", f"❌ 文件读取失败：{str(e)}")
+
+    def _read_file_content(self, file_path):
+        """读取文件内容（根据类型）"""
+        import pandas as pd
+        from docx import Document
+        import PyPDF2
+
+        if file_path.endswith('.txt'):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        elif file_path.endswith('.docx'):
+            doc = Document(file_path)
+            return '\n'.join([para.text for para in doc.paragraphs if para.text.strip()])
+        elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
+            df = pd.read_excel(file_path)
+            return df.to_string()
+        elif file_path.endswith('.pdf'):
+            with open(file_path, 'rb') as f:
+                reader = PyPDF2.PdfReader(f)
+                content = ''
+                for page in reader.pages:
+                    content += page.extract_text() + '\n'
+                return content
+        else:
+            return ""
 
     def UpdateModeButtonStyle(self):
         # 首先把所有按钮都恢复到默认样式
@@ -930,80 +1017,123 @@ class MainWindowWidget(QMainWindow):
             self.DisplayMessage("system", f"本地模型错误：{str(e)}")
 
     def SendMessageFunc(self):
+        # # 首先获取用户输入
+        # user_text = self.ui0.text_message_input.toPlainText().strip()
+        #
+        # # 如果有上传的文件，自动附加文件内容
+        # if hasattr(self, 'current_file_path') and self.current_file_path:
+        #     file_path = self.current_file_path
+        #     file_name = os.path.basename(file_path)
+        #     # 把文件内容加到 raw_message 里
+        #
+        #     try:
+        #         # 根据文件类型读取内容
+        #         if file_path.endswith('.txt'):
+        #             with open(file_path, 'r', encoding='utf-8') as f:
+        #                 file_content = f.read()
+        #             file_name = os.path.basename(file_path)
+        #             file_size = os.path.getsize(file_path)
+        #             user_text = f"【上传了TXT文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
+        #             self.current_file_content = file_content
+        #
+        #         elif file_path.endswith('.docx'):
+        #             from docx import Document
+        #             doc = Document(file_path)
+        #             content = '\n'.join([para.text for para in doc.paragraphs if para.text.strip()])
+        #             file_name = os.path.basename(file_path)
+        #             file_size = os.path.getsize(file_path)
+        #             user_text = f"【上传了Word文档】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
+        #             self.current_file_content = content
+        #
+        #         elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
+        #             import pandas as pd
+        #             df = pd.read_excel(file_path)
+        #             file_name = os.path.basename(file_path)
+        #             file_size = os.path.getsize(file_path)
+        #             rows, cols = df.shape
+        #             content = df.to_string()
+        #             user_text = f"【上传了Excel文件】\n文件名：{file_name}\n大小：{file_size} 字节\n行数：{rows}，列数：{cols}\n\n【用户要求】\n{user_text}"
+        #             self.current_file_content = content
+        #
+        #         elif file_path.endswith('.pdf'):
+        #             import PyPDF2
+        #             with open(file_path, 'rb') as f:
+        #                 reader = PyPDF2.PdfReader(f)
+        #                 content = ''
+        #                 for page in reader.pages:
+        #                     content += page.extract_text() + '\n'
+        #             file_name = os.path.basename(file_path)
+        #             file_size = os.path.getsize(file_path)
+        #             user_text = f"【上传了PDF文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
+        #             self.current_file_content = content
+        #
+        #         # 加标记存文件内容
+        #         marked_content = f"【文件内容开始】\n{self.current_file_content}\n【文件内容结束】"
+        #         self.raw_message.append({"role": "user", "content": marked_content})
+        #
+        #         # 清除已上传的文件标记
+        #         delattr(self, 'current_file_path')
+        #         delattr(self, 'current_file_content')
+        #
+        #     except Exception as e:
+        #         self.DisplayMessage("system", f"文件读取失败：{str(e)}")
+        #         return
+        #
+        # # 如果发送到消息是提示词或者新内容，不发送
+        # if not user_text or user_text == self.input_placeholder:
+        #     return
+        #
+        # # 显示用户消息
+        # self.DisplayMessage("user", user_text)
+        # # 发完后清空
+        # self.ui0.text_message_input.clear()
+        # # 恢复提示词
+        # self.ui0.text_message_input.setPlainText(self.input_placeholder)
+        # # 添加到历史消息中
+        # self.raw_message.append({"role": "user", "content": user_text})
+        #
+        # # 调用API之前
+        # if (self.current_mode in ["research_api", "research_local", "code", "research_rag"]) and is_stream_mode:
+        #     self.is_calculating = True
+        #     self.update_system_info("busy")
+        #     QApplication.processEvents()
+
         # 首先获取用户输入
         user_text = self.ui0.text_message_input.toPlainText().strip()
 
         # 如果有上传的文件，自动附加文件内容
-        if hasattr(self, 'current_file_path') and self.current_file_path:
-            file_path = self.current_file_path
-            file_name = os.path.basename(file_path)
-            # 把文件内容加到 raw_message 里
+        if self.uploaded_files:
+            files_content = []
+            for idx, file_info in enumerate(self.uploaded_files, 1):
+                files_content.append(f"\n【文件{idx}：{file_info['name']}】\n{file_info['content']}")
 
-            try:
-                # 根据文件类型读取内容
-                if file_path.endswith('.txt'):
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        file_content = f.read()
-                    file_name = os.path.basename(file_path)
-                    file_size = os.path.getsize(file_path)
-                    user_text = f"【上传了TXT文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-                    self.current_file_content = file_content
+            all_files_content = "【上传文件内容】\n" + "\n".join(files_content)
+            marked_content = f"{all_files_content}\n\n【用户要求】\n{user_text}"
 
-                elif file_path.endswith('.docx'):
-                    from docx import Document
-                    doc = Document(file_path)
-                    content = '\n'.join([para.text for para in doc.paragraphs if para.text.strip()])
-                    file_name = os.path.basename(file_path)
-                    file_size = os.path.getsize(file_path)
-                    user_text = f"【上传了Word文档】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-                    self.current_file_content = content
+            # 临时替换用户消息
+            self.raw_message.append({"role": "user", "content": marked_content})
 
-                elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
-                    import pandas as pd
-                    df = pd.read_excel(file_path)
-                    file_name = os.path.basename(file_path)
-                    file_size = os.path.getsize(file_path)
-                    rows, cols = df.shape
-                    content = df.to_string()
-                    user_text = f"【上传了Excel文件】\n文件名：{file_name}\n大小：{file_size} 字节\n行数：{rows}，列数：{cols}\n\n【用户要求】\n{user_text}"
-                    self.current_file_content = content
+            # 不清空上传列表，保留供后续使用
+            # 如果希望发送后清空，可以加一个选项
 
-                elif file_path.endswith('.pdf'):
-                    import PyPDF2
-                    with open(file_path, 'rb') as f:
-                        reader = PyPDF2.PdfReader(f)
-                        content = ''
-                        for page in reader.pages:
-                            content += page.extract_text() + '\n'
-                    file_name = os.path.basename(file_path)
-                    file_size = os.path.getsize(file_path)
-                    user_text = f"【上传了PDF文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-                    self.current_file_content = content
+            # 在聊天框里显示文件已附加的系统消息
+            self.DisplayMessage("system", f"📎 已附加 {len(self.uploaded_files)} 个文件到本次提问中")
 
-                # 加标记存文件内容
-                marked_content = f"【文件内容开始】\n{self.current_file_content}\n【文件内容结束】"
-                self.raw_message.append({"role": "user", "content": marked_content})
+            # 添加用户消息显示（不带文件内容）
+            self.DisplayMessage("user", f"【附带 {len(self.uploaded_files)} 个文件】\n{user_text}")
 
-                # 清除已上传的文件标记
-                delattr(self, 'current_file_path')
-                delattr(self, 'current_file_content')
+            # 发完后不清空文件列表，保留供后续提问使用
 
-            except Exception as e:
-                self.DisplayMessage("system", f"文件读取失败：{str(e)}")
+        else:
+            # 没有文件的情况
+            if not user_text or user_text == self.input_placeholder:
                 return
+            self.DisplayMessage("user", user_text)
+            self.raw_message.append({"role": "user", "content": user_text})
 
-        # 如果发送到消息是提示词或者新内容，不发送
-        if not user_text or user_text == self.input_placeholder:
-            return
-
-        # 显示用户消息
-        self.DisplayMessage("user", user_text)
-        # 发完后清空
+        # 发完后清空输入框
         self.ui0.text_message_input.clear()
-        # 恢复提示词
         self.ui0.text_message_input.setPlainText(self.input_placeholder)
-        # 添加到历史消息中
-        self.raw_message.append({"role": "user", "content": user_text})
 
         # 调用API之前
         if (self.current_mode in ["research_api", "research_local", "code", "research_rag"]) and is_stream_mode:

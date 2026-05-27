@@ -43,7 +43,7 @@ pip3 install --upgrade pip
 pip3 install PySide6 openai requests markdown python-dotenv pandas
 pip3 install python-docx PyPDF2 pdf2image pytesseract pycryptodome
 pip3 install chromadb sentence-transformers transformers torch
-pip3 install openpyxl
+pip3 install openpyxl python-pptx
 
 # ========== Download AI Model ==========
 echo ""
