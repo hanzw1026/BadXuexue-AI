@@ -23,7 +23,7 @@ def get_platform_default_font_size():
 def get_default_env_content():
     platform_default_size = get_platform_default_font_size()
 
-    return '''# ==================== API 配置 ====================
+    return f'''# ==================== API 配置 ====================
 CHAT_ASSISTANT_API_KEY=
 CHAT_ASSISTANT_API_URL=https://api.deepseek.com
 
