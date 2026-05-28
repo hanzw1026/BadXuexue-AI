@@ -2,6 +2,7 @@ from fileinput import filename
 from PySide6 import QtGui
 from PySide6.QtWidgets import QWidget, QMainWindow, QApplication, QSizePolicy, QVBoxLayout, QHBoxLayout, QTextEdit
 from PySide6.QtWidgets import QMessageBox, QDialog, QLabel, QProgressBar, QPushButton, QApplication
+from PySide6.QtWidgets import QListWidgetItem, QMenu
 from PySide6.QtCore import QTimer, QEvent, Qt
 from certifi import contents
 from PySide6.QtGui import QTextCursor, QFont, QColor
@@ -341,16 +342,16 @@ class MainWindowWidget(QMainWindow):
         welcome_title = os.getenv("SYSTEM_WELCOME_TITLE", "🐱 欢迎使用雪雪AI助手！")
 
         # 根据聊天模式加载历史消息
-        self.local_exist_history_files = {"chat": "chat_history.json",
-                                          "research_api": "research_api_history.json",
-                                          "research_rag": "research_rag_history.json",
-                                          "research_local": "research_local_history.json",
-                                          "code": "code_history.json"}
-        self.history_file = self.local_exist_history_files[self.current_mode]
-        self.LoadHistory()  # LoadHistory里会给self.raw_message 赋值
+        # self.local_exist_history_files = {"chat": "chat_history.json",
+        #                                   "research_api": "research_api_history.json",
+        #                                   "research_rag": "research_rag_history.json",
+        #                                   "research_local": "research_local_history.json",
+        #                                   "code": "code_history.json"}
+        # self.history_file = self.local_exist_history_files[self.current_mode]
+        # self.LoadHistory()  # LoadHistory里会给self.raw_message 赋值
         # 如果LoadHistory没赋值，再给默认值
-        if not hasattr(self, 'raw_message') or not self.raw_message:
-            self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
+        # if not hasattr(self, 'raw_message') or not self.raw_message:
+        #     self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
 
         # 根据聊天模式加载输入框默认提示词
         self.input_placeholder_presets = {"chat": "输入你想发送的消息～",
@@ -376,6 +377,22 @@ class MainWindowWidget(QMainWindow):
 
         self.UpdateModeButtonStyle()
 
+        # ===== 多 Session 管理相关 =====
+        self.sessions_dir = resource_path("sessions")  # sessions 根目录
+        if init_config.isInTestMode:
+            print(f"📁 sessions_dir = {self.sessions_dir}")
+
+        self.current_session_id = None  # 当前打开的 session ID
+        self.current_mode_sessions = []  # 当前模式下的 session 列表
+
+        # 确保 sessions 目录存在
+        os.makedirs(self.sessions_dir, exist_ok=True)
+
+        # 绑定 Session 列表的双击事件和右键菜单
+        self.ui0.list_history_sessions.itemDoubleClicked.connect(self.switch_session)
+        self.ui0.list_history_sessions.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.ui0.list_history_sessions.customContextMenuRequested.connect(self.show_session_context_menu)
+
         # 安装事件过滤器
         self.ui0.text_message_input.mousePressEvent = self.OnInputClick
         # 绑定按钮
@@ -393,6 +410,15 @@ class MainWindowWidget(QMainWindow):
         self.ui0.btn_sys_setting.clicked.connect(self.open_setting_dialog)
         self.ui0.btn_loacl_knowledge_base.clicked.connect(self.open_knowledge_base)
 
+        # 初始化当前模式的 session 列表和默认对话
+        self.load_session_list()
+        if self.current_mode_sessions:
+            self.load_session(self.current_mode_sessions[0])  # 有 session 就加载第一个
+        else:
+            # ✅ 只在完全为空时创建一个初始 session
+            self.create_new_session()  # 这个只会在首次启动时调用一次
+
+        self._switching_mode = False
         # 添加网络检测定时器
         self.network_timer = QTimer()
         self.network_timer.timeout.connect(self.check_network)
@@ -552,25 +578,6 @@ class MainWindowWidget(QMainWindow):
             # 网络异常，显示离线状态
             self.update_system_info("offline")
 
-    # def UploadFile(self):
-    #     file_path, _ = QFileDialog.getOpenFileName(
-    #         self,
-    #         "选择文件",
-    #         "",
-    #         "所有文件 (*);;图片 (*.png *.jpg *.jpeg *.gif);;文档 (*.pdf *.docx *.txt);;表格 (*.xlsx *.xls)")
-    #
-    #     if not file_path:
-    #         return
-    #
-    #     file_name = os.path.basename(file_path)
-    #     file_size = os.path.getsize(file_path)
-    #
-    #     # 在聊天框里显示文件上传成功的系统消息
-    #     self.DisplayMessage("system", f"已上传文件：{file_name} ({file_size} 字节)\n你可以输入指令让我处理这个文件。")
-    #
-    #     # 保存文件路径
-    #     self.current_file_path = file_path
-
     def UploadFile(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -648,29 +655,66 @@ class MainWindowWidget(QMainWindow):
                                                 """)
 
     def SwitchMode(self, mode):
+        # if mode == self.current_mode:
+        #     return
+        # else:
+        #     # 保存当前模式的历史
+        #     self.SaveHistory()
+        #     # 切换模式
+        #     self.current_mode = mode
+        #     # 根据模式选择历史文件
+        #     self.current_mode = mode
+        #     self.history_file = self.local_exist_history_files[mode]  # 直接映射
+        #     # 清空显示
+        #     self.clear_webview()
+        #     # 加载新模式的历史消息
+        #     self.LoadHistory()
+        #     # 显示系统消息
+        #     if len(self.raw_message) > 0 and self.raw_message[0]["role"] == "system":
+        #         self.DisplayMessage("system", self.raw_message[0]["content"])
+        #     # 切换输入框提示词
+        #     self.input_placeholder = self.input_placeholder_presets[mode]
+        #     self.ui0.text_message_input.setPlainText(self.input_placeholder)
+        #
+        #     self.UpdateModeButtonStyle()
+        #     self.update_system_info("normal")
+
         if mode == self.current_mode:
             return
-        else:
-            # 保存当前模式的历史
-            self.SaveHistory()
-            # 切换模式
+
+            # ✅ 添加防抖标志
+        if hasattr(self, '_switching_mode') and self._switching_mode:
+            return
+        self._switching_mode = True
+
+
+
+        try:
+            # 保存当前 session
+            if self.current_session_id:
+                self.save_current_session()
+                self.current_session_id = None  # 清空
+
             self.current_mode = mode
-            # 根据模式选择历史文件
-            self.current_mode = mode
-            self.history_file = self.local_exist_history_files[mode]  # 直接映射
-            # 清空显示
-            self.clear_webview()
-            # 加载新模式的历史消息
-            self.LoadHistory()
-            # 显示系统消息
-            if len(self.raw_message) > 0 and self.raw_message[0]["role"] == "system":
-                self.DisplayMessage("system", self.raw_message[0]["content"])
-            # 切换输入框提示词
-            self.input_placeholder = self.input_placeholder_presets[mode]
-            self.ui0.text_message_input.setPlainText(self.input_placeholder)
+
+            self.load_session_list()
+
+            if self.current_mode_sessions:
+                self.load_session(self.current_mode_sessions[0])
+            else:
+                # self.current_session_id = None
+                self.raw_message = []
+                self.clear_webview()
+                self.DisplayMessage("system", f"📭 {mode} 模式下暂无会话\n\n右键点击左侧列表可以新建会话～")
+
+            self.input_placeholder = self.input_placeholder_presets.get(mode, "输入你想发送的消息～")
+            self.ui0.text_message_input.setPlaceholderText(self.input_placeholder)
+            self.ui0.text_message_input.clear()
 
             self.UpdateModeButtonStyle()
             self.update_system_info("normal")
+        finally:
+            self._switching_mode = False
 
     def OnInputClick(self, event):
         # 先执行原来的mousePressEvent，保持光标正常
@@ -757,7 +801,7 @@ class MainWindowWidget(QMainWindow):
             print(f"LoadHistory: 开始加载 {self.history_file}")
         # 如果没有json聊天记录文件，则新建一个
         if not (os.path.exists(self.history_file)):
-            self.CreateEmptyHistoryFile()
+            # self.CreateEmptyHistoryFile()
             self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
             # 显示默认系统消息
             if self.raw_message and self.raw_message[0]["role"] == "system":
@@ -852,7 +896,7 @@ class MainWindowWidget(QMainWindow):
 
                 self.DisplayMessage("assistant", reply)
                 self.raw_message.append({"role": "assistant", "content": reply})
-                self.SaveHistory()
+                # self.SaveHistory()
                 # 恢复正常状态
                 self.update_system_info("normal")
                 return  # 代码执行成功就返回
@@ -982,7 +1026,7 @@ class MainWindowWidget(QMainWindow):
                     print(f"🔧 内容预览: {full_response[:100]}")
 
                 self.raw_message[placeholder_index]["content"] = full_response
-                self.SaveHistory()
+                # self.SaveHistory()
                 return
 
             except Exception as e:
@@ -1019,7 +1063,7 @@ class MainWindowWidget(QMainWindow):
                 reply = response.json()["response"]
                 self.DisplayMessage("assistant", reply)
                 self.raw_message.append({"role": "assistant", "content": reply})
-                self.SaveHistory()
+                # self.SaveHistory()
             else:
                 self.DisplayMessage("system", f"本地模型调用失败：{response.status_code}")
             # 恢复正常状态
@@ -1031,86 +1075,10 @@ class MainWindowWidget(QMainWindow):
             self.DisplayMessage("system", f"本地模型错误：{str(e)}")
 
     def SendMessageFunc(self):
-        # # 首先获取用户输入
-        # user_text = self.ui0.text_message_input.toPlainText().strip()
-        #
-        # # 如果有上传的文件，自动附加文件内容
-        # if hasattr(self, 'current_file_path') and self.current_file_path:
-        #     file_path = self.current_file_path
-        #     file_name = os.path.basename(file_path)
-        #     # 把文件内容加到 raw_message 里
-        #
-        #     try:
-        #         # 根据文件类型读取内容
-        #         if file_path.endswith('.txt'):
-        #             with open(file_path, 'r', encoding='utf-8') as f:
-        #                 file_content = f.read()
-        #             file_name = os.path.basename(file_path)
-        #             file_size = os.path.getsize(file_path)
-        #             user_text = f"【上传了TXT文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-        #             self.current_file_content = file_content
-        #
-        #         elif file_path.endswith('.docx'):
-        #             from docx import Document
-        #             doc = Document(file_path)
-        #             content = '\n'.join([para.text for para in doc.paragraphs if para.text.strip()])
-        #             file_name = os.path.basename(file_path)
-        #             file_size = os.path.getsize(file_path)
-        #             user_text = f"【上传了Word文档】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-        #             self.current_file_content = content
-        #
-        #         elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
-        #             import pandas as pd
-        #             df = pd.read_excel(file_path)
-        #             file_name = os.path.basename(file_path)
-        #             file_size = os.path.getsize(file_path)
-        #             rows, cols = df.shape
-        #             content = df.to_string()
-        #             user_text = f"【上传了Excel文件】\n文件名：{file_name}\n大小：{file_size} 字节\n行数：{rows}，列数：{cols}\n\n【用户要求】\n{user_text}"
-        #             self.current_file_content = content
-        #
-        #         elif file_path.endswith('.pdf'):
-        #             import PyPDF2
-        #             with open(file_path, 'rb') as f:
-        #                 reader = PyPDF2.PdfReader(f)
-        #                 content = ''
-        #                 for page in reader.pages:
-        #                     content += page.extract_text() + '\n'
-        #             file_name = os.path.basename(file_path)
-        #             file_size = os.path.getsize(file_path)
-        #             user_text = f"【上传了PDF文件】\n文件名：{file_name}\n大小：{file_size} 字节\n\n【用户要求】\n{user_text}"
-        #             self.current_file_content = content
-        #
-        #         # 加标记存文件内容
-        #         marked_content = f"【文件内容开始】\n{self.current_file_content}\n【文件内容结束】"
-        #         self.raw_message.append({"role": "user", "content": marked_content})
-        #
-        #         # 清除已上传的文件标记
-        #         delattr(self, 'current_file_path')
-        #         delattr(self, 'current_file_content')
-        #
-        #     except Exception as e:
-        #         self.DisplayMessage("system", f"文件读取失败：{str(e)}")
-        #         return
-        #
-        # # 如果发送到消息是提示词或者新内容，不发送
-        # if not user_text or user_text == self.input_placeholder:
-        #     return
-        #
-        # # 显示用户消息
-        # self.DisplayMessage("user", user_text)
-        # # 发完后清空
-        # self.ui0.text_message_input.clear()
-        # # 恢复提示词
-        # self.ui0.text_message_input.setPlainText(self.input_placeholder)
-        # # 添加到历史消息中
-        # self.raw_message.append({"role": "user", "content": user_text})
-        #
-        # # 调用API之前
-        # if (self.current_mode in ["research_api", "research_local", "code", "research_rag"]) and is_stream_mode:
-        #     self.is_calculating = True
-        #     self.update_system_info("busy")
-        #     QApplication.processEvents()
+        # 如果没有当前 session，提示用户先新建
+        if not self.current_session_id:
+            self.DisplayMessage("system", "📭 请先右键新建会话～")
+            return
 
         # 首先获取用户输入
         user_text = self.ui0.text_message_input.toPlainText().strip()
@@ -1216,11 +1184,39 @@ class MainWindowWidget(QMainWindow):
         self.web_displayer.page().runJavaScript(js)
 
     def ClearChat(self):
-        global isInTestMode
+        # global isInTestMode
+        # self.clear_webview()
+        # if isInTestMode:
+        #     os.remove(self.history_file)
+        # self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
+
+        """清空当前会话（仅清空内容，不删除 session 文件）"""
+
+        if not self.current_session_id:
+            self.DisplayMessage("system", "⚠️ 没有活动会话，无需清空")
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "确认清空",
+            f"确定要清空当前会话的所有消息吗？\n\n此操作不可撤销，但只会影响当前会话。",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
         self.clear_webview()
-        if isInTestMode:
-            os.remove(self.history_file)
         self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
+        self.save_current_session()
+
+        if self.raw_message and self.raw_message[0]["role"] == "system":
+            self.DisplayMessage("system", self.raw_message[0]["content"])
+
+        self.DisplayMessage("system", f"🧹 当前会话已清空\n\n可以开始新对话啦～")
+
+        self.load_session_list()
+        self._highlight_current_session()
 
     def init_web_template(self):
         """初始化HTML模板"""
@@ -1668,11 +1664,363 @@ class MainWindowWidget(QMainWindow):
         # 发送系统通知
         self.DisplayMessage("system", "✨ 配置已更新，新设置已生效。")
 
+        # 刷新 session 列表的显示（预览文字可能变了）
+        self.load_session_list()
+        self._highlight_current_session()
+
         if init_config.isInTestMode:
             print(f"✅ 配置已重新加载")
             print(f"   聊天用户颜色: {user_color_1}, 聊天助手颜色: {assistant_color_1}")
             print(f"   科研用户颜色: {research_color_1}, 科研助手颜色: {research_assistant_color}")
             print(f"   代码用户颜色: {code_color_1}, 代码助手颜色: {code_assistant_color}")
+
+    def get_mode_sessions_dir(self, mode=None):
+        """获取当前模式对应的 sessions 目录"""
+        if mode is None:
+            mode = self.current_mode
+        mode_dir = os.path.join(self.sessions_dir, mode)
+        os.makedirs(mode_dir, exist_ok=True)
+        return mode_dir
+
+    def get_session_file_path(self, session_id, mode=None):
+        """获取 session 文件的完整路径"""
+        mode_dir = self.get_mode_sessions_dir(mode)
+        return os.path.join(mode_dir, f"{session_id}.json")
+
+    def generate_session_id(self):
+        """生成新的 session ID（时间戳格式）"""
+        from datetime import datetime
+        return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    def get_session_display_name(self, session_id):
+        """获取 session 的显示名称（用于列表）"""
+        import re
+        pattern = r'^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})$'
+        match = re.match(pattern, session_id)
+
+        if match:
+            year, month, day, hour, minute, second = match.groups()
+            return f"{month}/{day} {hour}:{minute}"
+        else:
+            # 自定义名称，截断过长名称
+            return session_id[:30] + "..." if len(session_id) > 30 else session_id
+
+    def _get_session_preview(self, file_path, session_id):
+        """从 session 文件中提取预览信息"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                messages = json.load(f)
+
+            # 获取修改时间
+            mtime = os.path.getmtime(file_path)
+            from datetime import datetime
+            time_str = datetime.fromtimestamp(mtime).strftime("%m/%d %H:%M")
+
+            # 获取显示名称
+            display_name = self.get_session_display_name(session_id)
+
+            # 获取第一条非 system 消息作为预览
+            for msg in messages:
+                if msg['role'] == 'user':
+                    preview = msg['content'][:40]
+                    if len(msg['content']) > 40:
+                        preview += "..."
+                    return f"{display_name} | {preview}"
+
+            # 没有用户消息
+            return f"{display_name} | 空会话"
+        except Exception as e:
+            return f"⚠️ {session_id}"
+
+    def load_session_list(self):
+        """加载当前模式下的所有 session 列表，更新 UI"""
+        mode_dir = self.get_mode_sessions_dir()
+        if init_config.isInTestMode:
+            print(f"🔍 load_session_list: current_mode={self.current_mode}, mode_dir={mode_dir}")
+
+        # 获取所有 .json 文件
+        session_files = [f for f in os.listdir(mode_dir) if f.endswith('.json')]
+        # 按修改时间倒序排列（最新的在上）
+        session_files.sort(key=lambda x: os.path.getmtime(os.path.join(mode_dir, x)), reverse=True)
+
+        self.current_mode_sessions = []
+        self.ui0.list_history_sessions.clear()
+
+        for sf in session_files:
+            session_id = sf.replace('.json', '')
+            file_path = os.path.join(mode_dir, sf)
+
+            preview = self._get_session_preview(file_path, session_id)
+
+            item = QListWidgetItem(preview)
+            item.setData(Qt.ItemDataRole.UserRole, session_id)
+            self.ui0.list_history_sessions.addItem(item)
+            self.current_mode_sessions.append(session_id)
+
+        # 如果没有 session，显示一个提示项
+        if len(self.current_mode_sessions) == 0:
+            item = QListWidgetItem("📭 暂无会话，右键创建一个新对话")
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            self.ui0.list_history_sessions.addItem(item)
+
+    def create_new_session(self):
+        """创建新的 session"""
+        # 保存当前 session（如果有）
+        if self.current_session_id:
+            self.save_current_session()
+
+        # 生成新 session_id
+        self.current_session_id = self.generate_session_id()
+
+        # 重置 raw_message 为默认 system prompt
+        self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
+
+        # 清空 WebView
+        self.clear_webview()
+
+        # ✅ 新 session：显示 system 消息（让用户知道当前人设）
+        if self.raw_message and self.raw_message[0]["role"] == "system":
+            self.DisplayMessage("system", self.raw_message[0]["content"])
+
+        # ✅ 关键：立即保存这个新 session 到文件
+        self.save_current_session()
+
+        # 刷新 session 列表（现在目录里有文件了）
+        self.load_session_list()
+
+        if init_config.isInTestMode:
+            print(f"✅ create_new_session 完成: sessions={self.current_mode_sessions}")
+
+        # 高亮当前 session
+        self._highlight_current_session()
+
+        self.DisplayMessage("system", f"✨ 已创建新会话")
+
+    def save_current_session(self):
+        """保存当前 session 到文件"""
+        if not self.current_session_id:
+            return
+
+        session_path = self.get_session_file_path(self.current_session_id)
+
+        # 过滤掉临时标记的文件内容（保持历史干净）
+        filtered_messages = []
+        for msg in self.raw_message:
+            if msg["role"] == "user":
+                import re
+                content = msg["content"]
+                # 移除文件内容和知识库内容的标记块
+                cleaned = re.sub(r'【文件内容开始】.*?【文件内容结束】', '', content, flags=re.DOTALL)
+                cleaned = re.sub(r'【知识库检索内容开始】.*?【知识库检索内容结束】', '', cleaned, flags=re.DOTALL)
+                if cleaned.strip():
+                    filtered_messages.append({"role": "user", "content": cleaned})
+            else:
+                filtered_messages.append(msg)
+
+        try:
+            with open(session_path, 'w', encoding='utf-8') as f:
+                json.dump(filtered_messages, f, ensure_ascii=False, indent=2)
+            if isInTestMode:
+                print(f"💾 Session 已保存: {session_path}")
+        except Exception as e:
+            if isInTestMode:
+                print(f"⚠️ 保存 session 失败: {e}")
+
+    def load_session(self, session_id):
+        """加载指定的 session"""
+        session_path = self.get_session_file_path(session_id)
+
+        if not os.path.exists(session_path):
+            self.DisplayMessage("system", f"❌ 会话不存在")
+            return False
+
+        # 保存当前 session（如果有）
+        if self.current_session_id:
+            self.save_current_session()
+
+        try:
+            with open(session_path, 'r', encoding='utf-8') as f:
+                self.raw_message = json.load(f)
+
+            self.current_session_id = session_id
+
+            # 刷新显示
+            self.clear_webview()
+            for msg in self.raw_message:
+                # ✅ 已有 session：跳过 system 消息（避免重复显示）
+                if msg["role"] == "system":
+                    continue
+                self.DisplayMessage(msg["role"], msg["content"])
+
+            # 高亮当前 session
+            self._highlight_current_session()
+
+            self.DisplayMessage("system", f"📂 已加载会话")
+            return True
+        except Exception as e:
+            self.DisplayMessage("system", f"❌ 加载会话失败: {e}")
+            return False
+
+    def switch_session(self, item):
+        """双击切换 session"""
+        session_id = item.data(Qt.ItemDataRole.UserRole)
+        if session_id:
+            self.load_session(session_id)
+
+    def _highlight_current_session(self):
+        """在列表中高亮当前 session"""
+        for i in range(self.ui0.list_history_sessions.count()):
+            item = self.ui0.list_history_sessions.item(i)
+            session_id = item.data(Qt.ItemDataRole.UserRole)
+            if session_id == self.current_session_id:
+                item.setBackground(QColor("#3CB371"))
+                item.setForeground(QColor("#FFFFFF"))
+            else:
+                item.setBackground(QColor("transparent"))
+                item.setForeground(QColor("#E0E0E0"))
+
+    def show_session_context_menu(self, position):
+        """显示 session 列表的右键菜单"""
+        item = self.ui0.list_history_sessions.itemAt(position)
+
+        from PySide6.QtWidgets import QMenu
+
+        menu = QMenu()
+        new_action = menu.addAction("➕ 新建会话")
+        menu.addSeparator()
+
+        if item and item.data(Qt.ItemDataRole.UserRole):
+            session_id = item.data(Qt.ItemDataRole.UserRole)
+            rename_action = menu.addAction("✏️ 重命名会话")
+            delete_action = menu.addAction("🗑️ 删除会话")
+
+            action = menu.exec(self.ui0.list_history_sessions.mapToGlobal(position))
+
+            if action == new_action:
+                self.create_new_session_user()
+            elif action == rename_action:
+                self.rename_session(session_id, item)
+            elif action == delete_action:
+                self.delete_session_by_id(session_id, item)
+        else:
+            action = menu.exec(self.ui0.list_history_sessions.mapToGlobal(position))
+            if action == new_action:
+                self.create_new_session_user()
+
+    def create_new_session_user(self):
+        """用户主动创建新会话（右键菜单调用）"""
+        if self.current_session_id:
+            self.save_current_session()
+
+        self.current_session_id = self.generate_session_id()
+        self.raw_message = self.GetDefaultMessageForMode(self.current_mode)
+
+        self.clear_webview()
+
+        # ✅ 用户新建：显示 system 消息
+        if self.raw_message and self.raw_message[0]["role"] == "system":
+            self.DisplayMessage("system", self.raw_message[0]["content"])
+
+        self.save_current_session()
+        self.load_session_list()
+        self._highlight_current_session()
+
+        self.DisplayMessage("system", f"✨ 已创建新会话")
+
+    def rename_session(self, session_id, list_item):
+        """重命名 session（本质是重命名 JSON 文件）"""
+        from PySide6.QtWidgets import QInputDialog
+
+        # 获取当前显示名称
+        current_display = self.get_session_display_name(session_id)
+
+        # 判断是否是时间戳格式
+        import re
+        is_timestamp = bool(re.match(r'^\d{8}_\d{6}$', session_id))
+
+        default_text = "" if is_timestamp else session_id
+
+        # 弹出输入框
+        new_name, ok = QInputDialog.getText(
+            self,
+            "重命名会话",
+            "请输入新的会话名称（留空则恢复为时间戳格式）：",
+            text=default_text
+        )
+
+        if not ok:
+            return
+
+        # 处理新名称
+        if not new_name or new_name.strip() == "":
+            # 用户留空，生成新的时间戳作为名称
+            new_session_id = self.generate_session_id()
+        else:
+            # 清理非法字符
+            import re
+            new_session_id = re.sub(r'[\\/*?:"<>|]', '_', new_name.strip())
+
+        old_path = self.get_session_file_path(session_id)
+        new_path = self.get_session_file_path(new_session_id)
+
+        # 检查新文件名是否已存在
+        if os.path.exists(new_path) and new_session_id != session_id:
+            QMessageBox.warning(self, "重命名失败", f"会话名称已存在，请使用其他名称。")
+            return
+
+        try:
+            # 重命名文件
+            os.rename(old_path, new_path)
+
+            # 更新当前 session_id（如果重命名的是当前会话）
+            if self.current_session_id == session_id:
+                self.current_session_id = new_session_id
+
+            # 刷新 session 列表
+            self.load_session_list()
+
+            # 重新高亮当前会话
+            self._highlight_current_session()
+
+            self.DisplayMessage("system", f"✏️ 会话已重命名")
+
+        except Exception as e:
+            QMessageBox.warning(self, "重命名失败", f"无法重命名会话：{str(e)}")
+
+    def delete_session_by_id(self, session_id, list_item):
+        """删除指定的 session"""
+        reply = QMessageBox.question(
+            self, "确认删除",
+            f"确定要删除这个会话吗？\n此操作不可恢复。",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        session_path = self.get_session_file_path(session_id)
+        try:
+            os.remove(session_path)
+
+            # 如果删除的是当前会话
+            if session_id == self.current_session_id:
+                # 检查是否还有其他 session
+                mode_dir = self.get_mode_sessions_dir()
+                remaining = [f for f in os.listdir(mode_dir) if f.endswith('.json')]
+
+                if remaining:
+                    # 加载最新的 session
+                    latest = sorted(remaining, key=lambda x: os.path.getmtime(os.path.join(mode_dir, x)), reverse=True)[0]
+                    latest_id = latest.replace('.json', '')
+                    self.load_session(latest_id)
+                else:
+                    # 没有 session 了，创建新的
+                    self.create_new_session()
+
+            self.load_session_list()
+            self.DisplayMessage("system", f"🗑️ 已删除会话")
+        except Exception as e:
+            self.DisplayMessage("system", f"❌ 删除失败: {e}")
 
 
 if __name__ == "__main__":
