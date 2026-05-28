@@ -687,8 +687,6 @@ class MainWindowWidget(QMainWindow):
             return
         self._switching_mode = True
 
-
-
         try:
             # 保存当前 session
             if self.current_session_id:
@@ -1089,7 +1087,7 @@ class MainWindowWidget(QMainWindow):
             for idx, file_info in enumerate(self.uploaded_files, 1):
                 files_content.append(f"\n【文件{idx}：{file_info['name']}】\n{file_info['content']}")
 
-            all_files_content = "【上传文件内容】\n" + "\n".join(files_content)
+            all_files_content = "【文件内容开始】\n" + "\n".join(files_content) + "\n【文件内容结束】"
             marked_content = f"{all_files_content}\n\n【用户要求】\n{user_text}"
 
             # 临时替换用户消息
@@ -1141,22 +1139,23 @@ class MainWindowWidget(QMainWindow):
             # 从知识库检索相关内容
             kb_context = self.search_knowledge_base(user_text)
 
-            # 如果有检索结果，拼接到用户消息中
             if kb_context:
-                enhanced_text = f"""【知识库检索内容开始】
-            {kb_context}
-            【知识库检索内容结束】
-
-            【用户问题】
-            {user_text}
-
-            请基于以上知识库资料回答用户的问题。如果资料中没有相关信息，请用自己的知识回答。"""
+                # ✅ 统一使用紧凑格式，和文件上传保持一致
+                enhanced_text = f"【知识库检索内容开始】\n{kb_context}\n【知识库检索内容结束】\n\n【用户问题】\n{user_text}\n\n请基于以上知识库资料回答用户的问题。如果资料中没有相关信息，请用自己的知识回答。"
             else:
                 enhanced_text = user_text
+
+            self.raw_message[-1]["content"] = enhanced_text
+
+            if init_config.isInTestMode:
+                print("拼接后的enhanced_text消息：", enhanced_text)
 
             # 用增强后的文本替换原始用户消息
             # 注意：需要临时替换 raw_message 中的最后一条用户消息
             self.raw_message[-1]["content"] = enhanced_text
+
+            if init_config.isInTestMode:
+                print("用增强后的文本替换原始用户消息后：", self.raw_message)
 
             # 调用 API
             if is_stream_mode:
@@ -1165,11 +1164,15 @@ class MainWindowWidget(QMainWindow):
                 self.CallbackStaticMode("research_api")
 
             # 恢复原始用户消息（用于保存历史）
+            if init_config.isInTestMode:
+                print(f"🔍 恢复前: raw_message[-1]['content'] 长度 = {len(self.raw_message[-1]['content'])}")
             self.raw_message[-1]["content"] = user_text
-        elif self.current_mode == "research_rag":
-            self.DisplayMessage("system", "欢迎使用本地知识库模式")
+            if init_config.isInTestMode:
+                print(f"🔍 恢复后: raw_message[-1]['content'] = {self.raw_message[-1]['content']}")
+
         elif self.current_mode == "research_local":
             self.CallbackLocalMode()
+
         elif self.current_mode == "code":
             if is_stream_mode:
                 self.CallbackStreamMode("code")
@@ -1178,6 +1181,9 @@ class MainWindowWidget(QMainWindow):
 
         self.is_calculating = False
         self.update_system_info("normal")
+
+        # ✅ 在这里清空文件列表（最后）
+        self.uploaded_files = []
 
     def clear_webview(self):
         js = "document.getElementById('chat-container').innerHTML = '';"
@@ -1797,23 +1803,32 @@ class MainWindowWidget(QMainWindow):
         self.DisplayMessage("system", f"✨ 已创建新会话")
 
     def save_current_session(self):
-        """保存当前 session 到文件"""
+        """保存当前 session 到文件（自动过滤文件内容和知识库内容）"""
         if not self.current_session_id:
             return
 
         session_path = self.get_session_file_path(self.current_session_id)
 
-        # 过滤掉临时标记的文件内容（保持历史干净）
         filtered_messages = []
         for msg in self.raw_message:
-            if msg["role"] == "user":
+            if msg["role"] == "user" and ("【文件内容开始】" in msg["content"] or "【知识库检索内容开始】" in msg["content"]):
                 import re
-                content = msg["content"]
-                # 移除文件内容和知识库内容的标记块
-                cleaned = re.sub(r'【文件内容开始】.*?【文件内容结束】', '', content, flags=re.DOTALL)
+                if init_config.isInTestMode:
+                    print("用户原始消息：", self.raw_message)
+                # 去掉文件内容标记内的内容
+                cleaned = re.sub(r'【文件内容开始】.*?【文件内容结束】', '', msg["content"], flags=re.DOTALL)
+                if init_config.isInTestMode:
+                    print("切掉文件内容后：", cleaned)
+                # 去掉知识库检索内容标记内的内容
                 cleaned = re.sub(r'【知识库检索内容开始】.*?【知识库检索内容结束】', '', cleaned, flags=re.DOTALL)
-                if cleaned.strip():
-                    filtered_messages.append({"role": "user", "content": cleaned})
+                if init_config.isInTestMode:
+                    print("切掉知识库内容后：", cleaned)
+
+                # ✅ 如果清理后为空，给个占位符
+                if not cleaned.strip():
+                    cleaned = "（用户上传了文件）"
+
+                filtered_messages.append({"role": "user", "content": cleaned})
             else:
                 filtered_messages.append(msg)
 
