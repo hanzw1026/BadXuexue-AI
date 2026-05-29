@@ -1182,6 +1182,10 @@ class MainWindowWidget(QMainWindow):
         self.is_calculating = False
         self.update_system_info("normal")
 
+        print(f"🔍 准备保存 session: current_session_id = {self.current_session_id}, current_mode = {self.current_mode}")
+        self.save_current_session()
+        print(f"🔍 保存完成")
+
         # ✅ 在这里清空文件列表（最后）
         self.uploaded_files = []
 
@@ -1814,15 +1818,15 @@ class MainWindowWidget(QMainWindow):
             if msg["role"] == "user" and ("【文件内容开始】" in msg["content"] or "【知识库检索内容开始】" in msg["content"]):
                 import re
                 if init_config.isInTestMode:
-                    print("用户原始消息：", self.raw_message)
+                    print("SaveSession-用户原始消息：", self.raw_message)
                 # 去掉文件内容标记内的内容
                 cleaned = re.sub(r'【文件内容开始】.*?【文件内容结束】', '', msg["content"], flags=re.DOTALL)
                 if init_config.isInTestMode:
-                    print("切掉文件内容后：", cleaned)
+                    print("SaveSession-切掉文件内容后：", cleaned)
                 # 去掉知识库检索内容标记内的内容
                 cleaned = re.sub(r'【知识库检索内容开始】.*?【知识库检索内容结束】', '', cleaned, flags=re.DOTALL)
                 if init_config.isInTestMode:
-                    print("切掉知识库内容后：", cleaned)
+                    print("SaveSession-切掉知识库内容后：", cleaned)
 
                 # ✅ 如果清理后为空，给个占位符
                 if not cleaned.strip():
