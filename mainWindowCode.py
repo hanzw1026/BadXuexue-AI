@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainWindow_V0.5.ui'
+## Form generated from reading UI file 'mainWindow_V0.6.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.0
 ##
@@ -223,7 +223,7 @@ class Ui_mainWindow(object):
         self.btn_mode_sel_4.setText(QCoreApplication.translate("mainWindow", u"\u79d1\u7814\u52a9\u7406-\u672c\u5730\u6a21\u5f0f", None))
         self.btn_mode_sel_5.setText(QCoreApplication.translate("mainWindow", u"Coding\u6a21\u5f0f", None))
         self.btn_mode_sel_6.setText(QCoreApplication.translate("mainWindow", u"\u6587\u6863\u5de5\u4f5c\u52a9\u624b", None))
-        self.btn_mode_sel_7.setText(QCoreApplication.translate("mainWindow", u"\u6a21\u5f0f7\uff08INOP\uff09", None))
+        self.btn_mode_sel_7.setText(QCoreApplication.translate("mainWindow", u"\u591a\u6a21\u6001\u52a9\u624b", None))
         self.btn_loacl_knowledge_base.setText(QCoreApplication.translate("mainWindow", u"\u672c\u5730\u77e5\u8bc6\u5e93", None))
         self.btn_sys_setting.setText(QCoreApplication.translate("mainWindow", u"\u7cfb\u7edf\u8bbe\u7f6e", None))
         self.btn_send_message.setText(QCoreApplication.translate("mainWindow", u"\u53d1\u9001\u6d88\u606f", None))

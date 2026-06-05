@@ -170,30 +170,81 @@ class DocumentAssistantWindow(QWidget):
 
         # ===== 根据暗黑模式设置输入框样式 =====
         if self.isInDarkMode:
-            self.ui.edit_prompt.setStyleSheet("""
-                QTextEdit {
-                    background-color: #3c3c3c;
-                    color: #FFFFFB;
-                    font-size: {DEFAULT_FONT_SIZE}pt;
-                    border: 1px solid #555;
-                    border-radius: 4px;
-                    padding: 8px;
-                }
-            """)
-            self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            if platform.system() == "Windows":
+                self.ui.edit_prompt.setStyleSheet("""
+                    QTextEdit {
+                        background-color: #3c3c3c;
+                        color: #FFFFFB;
+                        font-size: 13pt;
+                        border: 1px solid #555;
+                        border-radius: 4px;
+                        padding: 8px;
+                        font-family: "Microsoft YaHei";
+                    }
+                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            elif platform.system() == "Darwin":
+                self.ui.edit_prompt.setStyleSheet("""
+                                    QTextEdit {
+                                        background-color: #3c3c3c;
+                                        color: #FFFFFB;
+                                        font-size: 16pt;
+                                        border: 1px solid #555;
+                                        border-radius: 4px;
+                                        padding: 8px;
+                                    }
+                                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            else:
+                self.ui.edit_prompt.setStyleSheet("""
+                                                    QTextEdit {
+                                                        background-color: #3c3c3c;
+                                                        color: #FFFFFB;
+                                                        border: 1px solid #555;
+                                                        border-radius: 4px;
+                                                        padding: 8px;
+                                                    }
+                                                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+
         else:
             # 亮色模式可以保持默认或设置浅色样式
-            self.ui.edit_prompt.setStyleSheet("""
-                QTextEdit {
-                    background-color: #ffffff;
-                    color: #333333;
-                    font-size: {DEFAULT_FONT_SIZE}pt;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    padding: 8px;
-                }
-            """)
-            self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            if platform.system() == "Windows":
+                self.ui.edit_prompt.setStyleSheet("""
+                    QTextEdit {
+                        background-color: #ffffff;
+                        color: #333333;
+                        font-size: 13pt;
+                        font-family: "Microsoft YaHei";
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                        padding: 8px;
+                    }
+                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            elif platform.system() == "Darwin":
+                self.ui.edit_prompt.setStyleSheet("""
+                                    QTextEdit {
+                                        background-color: #ffffff;
+                                        color: #333333;
+                                        font-size: 16pt;
+                                        border: 1px solid #ccc;
+                                        border-radius: 4px;
+                                        padding: 8px;
+                                    }
+                                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
+            else:
+                self.ui.edit_prompt.setStyleSheet("""
+                                                    QTextEdit {
+                                                        background-color: #ffffff;
+                                                        color: #333333;
+                                                        border: 1px solid #ccc;
+                                                        border-radius: 4px;
+                                                        padding: 8px;
+                                                    }
+                                                """)
+                self.ui.edit_prompt.setPlaceholderText("输入你的需求描述...")
 
         # ===== 动态添加缩放按钮（模板预览区）=====
         self._add_zoom_controls_to_layout(

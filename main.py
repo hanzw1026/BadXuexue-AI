@@ -30,11 +30,10 @@ import knowledge_dialog_ui
 from knowledge_base_dialog import KnowledgeBaseDialog
 import shutil
 import openpyxl
+from multimodal_handler import MultimodalHandler
+
 
 isInTestMode = init_config.isInTestMode
-
-chat_mode_model_name = "deepseek-v4-flash"
-research_mode_model_name = "deepseek-v4-pro"
 
 
 def get_platform_default_font_size():
@@ -149,19 +148,6 @@ def get_api_key_for_mode(mode):
             key = os.getenv("CHAT_ASSISTANT_API_KEY")
             url = os.getenv("CHAT_ASSISTANT_API_URL", "https://api.deepseek.com")
 
-    elif mode == "document":
-        # 优先文档专用
-        key = os.getenv("DOCUMENT_ASSISTANT_API_KEY")
-        url = os.getenv("DOCUMENT_ASSISTANT_API_URL")
-
-        if not key:
-            key = os.getenv("RESEARCH_ASSISTANT_API_KEY")
-            url = os.getenv("RESEARCH_ASSISTANT_API_URL")
-
-        if not key:
-            key = os.getenv("CHAT_ASSISTANT_API_KEY")
-            url = os.getenv("CHAT_ASSISTANT_API_URL", "https://api.deepseek.com")
-
     else:  # 默认
         key = os.getenv("CHAT_ASSISTANT_API_KEY")
         url = os.getenv("CHAT_ASSISTANT_API_URL", "https://api.deepseek.com")
@@ -177,7 +163,10 @@ if isInTestMode:
     print(f"聊天模式的api_key/url：", get_api_key_for_mode("chat"))
     print(f"科研助手模式的api_key/url：", get_api_key_for_mode("research_api"))
     print(f"代码助手模式的api_key/url：", get_api_key_for_mode("code"))
-    print(f"文档模式的api_key/url：", get_api_key_for_mode("document"))
+
+
+chat_mode_model_name = os.getenv("CHAT_MODEL", "deepseek-v4-flash")
+research_mode_model_name = os.getenv("RESEARCH_MODEL", "deepseek-v4-pro")
 
 # ---------- 科研助手 ----------
 research_font_1 = os.getenv("RESEARCH_USER_FONT", ".AppleSystemUIFont")
@@ -228,6 +217,20 @@ code_color_1 = os.getenv("CODE_COLOR", "#28A745")
 code_prefix_1 = os.getenv("CODE_PREFIX", "👨‍💻代码助手：")
 code_bg_1 = os.getenv("CODE_BG", "")
 code_assistant_prompt = os.getenv("CODE_ASSISTANT_PROMPT", "")
+
+# ---------- 多模态模型（图像助手）----------
+multimodal_user_font_1 = os.getenv("MULTIMODAL_USER_FONT", "")
+multimodal_user_size_1 = int(os.getenv("MULTIMODAL_USER_SIZE", DEFAULT_FONT_SIZE))
+multimodal_user_color_1 = os.getenv("MULTIMODAL_USER_COLOR", "#9b59b6")
+multimodal_user_bg_1 = os.getenv("MULTIMODAL_USER_BG", "")
+user_prefix_multimodal = os.getenv("USER_PREFIX_MULTIMODAL", "📸用户：")
+
+multimodal_assistant_font_1 = os.getenv("MULTIMODAL_ASSISTANT_FONT", "")
+multimodal_assistant_size_1 = int(os.getenv("MULTIMODAL_ASSISTANT_SIZE", DEFAULT_FONT_SIZE))
+multimodal_assistant_color_1 = os.getenv("MULTIMODAL_ASSISTANT_COLOR", "#9b59b6")
+multimodal_assistant_bg_1 = os.getenv("MULTIMODAL_ASSISTANT_BG", "")
+multimodal_prefix_1 = os.getenv("MULTIMODAL_PREFIX", "🖼️多模态和图像助手：")
+multimodal_system_prompt = os.getenv("MULTIMODAL_SYSTEM_PROMPT", "你是多模态和图像助手")
 
 # ---------- 系统消息 ----------
 system_font_1 = os.getenv("SYSTEM_FONT_1", ".AppleSystemUIFont")
@@ -288,37 +291,106 @@ class MainWindowWidget(QMainWindow):
         # 知识库引用（懒加载）
         self.kb_dialog = None
 
-        self.setStyleSheet("""
-            QMainWindow {
-                background-color: #1e1e1e;
-            }
-            QWidget {
-                background-color: #1e1e1e;
-                color: #e0e0e0;
-            }
-            QTextEdit, QLineEdit {
-                background-color: #3c3c3c;
-                border: 1px solid #555;
-                border-radius: 4px;
-                padding: 4px;
-                color: #e0e0e0;
-            }
-            QPushButton {
-                background-color: #4a4a4a;
-                border: 1px solid #666;
-                border-radius: 4px;
-                padding: 6px;
-                color: #e0e0e0;
-            }
-            QPushButton:hover {
-                background-color: #5a5a5a;
-            }
-            QListWidget {
-                background-color: #2d2d2d;
-                border: 1px solid #444;
-                color: #e0e0e0;
-            }
-        """)
+        if platform.system() == "Windows":
+            self.setStyleSheet("""
+                QMainWindow {
+                    background-color: #1e1e1e;
+                }
+                QWidget {
+                    background-color: #1e1e1e;
+                    color: #e0e0e0;
+                }
+                QTextEdit {
+                    background-color: #3c3c3c;
+                    border: 1px solid #555;
+                    border-radius: 4px;
+                    padding: 4px;
+                    color: #e0e0e0;
+                    font-size: 13pt;
+                    font-family: "Microsoft YaHei"
+                }
+                QPushButton {
+                    background-color: #4a4a4a;
+                    border: 1px solid #666;
+                    border-radius: 4px;
+                    padding: 6px;
+                    color: #e0e0e0;
+                }
+                QPushButton:hover {
+                    background-color: #5a5a5a;
+                }
+                QListWidget {
+                    background-color: #2d2d2d;
+                    border: 1px solid #444;
+                    color: #e0e0e0;
+                }
+            """)
+
+        elif platform.system() == "Darwin":
+            self.setStyleSheet("""
+                        QMainWindow {
+                            background-color: #1e1e1e;
+                        }
+                        QWidget {
+                            background-color: #1e1e1e;
+                            color: #e0e0e0;
+                        }
+                        QTextEdit {
+                            background-color: #3c3c3c;
+                            border: 1px solid #555;
+                            border-radius: 4px;
+                            padding: 4px;
+                            color: #e0e0e0;
+                            font-size: 16pt;
+                        }
+                        QPushButton {
+                            background-color: #4a4a4a;
+                            border: 1px solid #666;
+                            border-radius: 4px;
+                            padding: 6px;
+                            color: #e0e0e0;
+                        }
+                        QPushButton:hover {
+                            background-color: #5a5a5a;
+                        }
+                        QListWidget {
+                            background-color: #2d2d2d;
+                            border: 1px solid #444;
+                            color: #e0e0e0;
+                        }
+                    """)
+        else:
+            self.setStyleSheet("""
+                                    QMainWindow {
+                                        background-color: #1e1e1e;
+                                    }
+                                    QWidget {
+                                        background-color: #1e1e1e;
+                                        color: #e0e0e0;
+                                    }
+                                    QTextEdit {
+                                        background-color: #3c3c3c;
+                                        border: 1px solid #555;
+                                        border-radius: 4px;
+                                        padding: 4px;
+                                        color: #e0e0e0;
+                                    }
+                                    QPushButton {
+                                        background-color: #4a4a4a;
+                                        border: 1px solid #666;
+                                        border-radius: 4px;
+                                        padding: 6px;
+                                        color: #e0e0e0;
+                                    }
+                                    QPushButton:hover {
+                                        background-color: #5a5a5a;
+                                    }
+                                    QListWidget {
+                                        background-color: #2d2d2d;
+                                        border: 1px solid #444;
+                                        color: #e0e0e0;
+                                    }
+                                """)
 
         # 初始化系统信息框
         self.update_system_info("normal")
@@ -358,6 +430,7 @@ class MainWindowWidget(QMainWindow):
                                           "research_api": "把文件草稿给我，并准确描述你的要求。",
                                           "research_rag": "把文件草稿给我，并准确描述你的要求。",
                                           "research_local": "把文件草稿给我，并准确描述你的要求。",
+                                          "multimodal": "上传图片或文档，告诉我你想怎么处理",
                                           "code": "代码遇到了什么问题呢？"}
         self.input_placeholder = self.input_placeholder_presets[self.current_mode]
         self.ui0.text_message_input.setPlaceholderText(self.input_placeholder)
@@ -372,6 +445,7 @@ class MainWindowWidget(QMainWindow):
             "research_rag": self.ui0.btn_mode_sel_3,
             "research_local": self.ui0.btn_mode_sel_4,
             "code": self.ui0.btn_mode_sel_5,
+            "multimodal": self.ui0.btn_mode_sel_7,
             "setting": self.ui0.btn_sys_setting
         }
 
@@ -410,6 +484,8 @@ class MainWindowWidget(QMainWindow):
         self.ui0.btn_sys_setting.clicked.connect(self.open_setting_dialog)
         self.ui0.btn_loacl_knowledge_base.clicked.connect(self.open_knowledge_base)
 
+        self.ui0.btn_mode_sel_7.clicked.connect(lambda: self.SwitchMode("multimodal"))
+
         # 初始化当前模式的 session 列表和默认对话
         self.load_session_list()
         if self.current_mode_sessions:
@@ -417,6 +493,8 @@ class MainWindowWidget(QMainWindow):
         else:
             # ✅ 只在完全为空时创建一个初始 session
             self.create_new_session()  # 这个只会在首次启动时调用一次
+
+        self.multimodal_handler = None  # 多模态处理器
 
         self._switching_mode = False
         # 添加网络检测定时器
@@ -655,34 +733,10 @@ class MainWindowWidget(QMainWindow):
                                                 """)
 
     def SwitchMode(self, mode):
-        # if mode == self.current_mode:
-        #     return
-        # else:
-        #     # 保存当前模式的历史
-        #     self.SaveHistory()
-        #     # 切换模式
-        #     self.current_mode = mode
-        #     # 根据模式选择历史文件
-        #     self.current_mode = mode
-        #     self.history_file = self.local_exist_history_files[mode]  # 直接映射
-        #     # 清空显示
-        #     self.clear_webview()
-        #     # 加载新模式的历史消息
-        #     self.LoadHistory()
-        #     # 显示系统消息
-        #     if len(self.raw_message) > 0 and self.raw_message[0]["role"] == "system":
-        #         self.DisplayMessage("system", self.raw_message[0]["content"])
-        #     # 切换输入框提示词
-        #     self.input_placeholder = self.input_placeholder_presets[mode]
-        #     self.ui0.text_message_input.setPlainText(self.input_placeholder)
-        #
-        #     self.UpdateModeButtonStyle()
-        #     self.update_system_info("normal")
-
         if mode == self.current_mode:
             return
 
-            # ✅ 添加防抖标志
+        # 添加防抖标志
         if hasattr(self, '_switching_mode') and self._switching_mode:
             return
         self._switching_mode = True
@@ -691,20 +745,44 @@ class MainWindowWidget(QMainWindow):
             # 保存当前 session
             if self.current_session_id:
                 self.save_current_session()
-                self.current_session_id = None  # 清空
+                self.current_session_id = None
+
+            # 解绑原有的发送按钮和上传按钮（避免重复绑定）
+            try:
+                self.ui0.btn_send_message.clicked.disconnect()
+            except:
+                pass
+            try:
+                self.ui0.btn_upload_file.clicked.disconnect()
+            except:
+                pass
 
             self.current_mode = mode
+
+            # 初始化多模态处理器（如果需要）
+            if mode == "multimodal" and not self.multimodal_handler:
+                self._init_multimodal_handler()
 
             self.load_session_list()
 
             if self.current_mode_sessions:
                 self.load_session(self.current_mode_sessions[0])
             else:
-                # self.current_session_id = None
                 self.raw_message = []
                 self.clear_webview()
                 self.DisplayMessage("system", f"📭 {mode} 模式下暂无会话\n\n右键点击左侧列表可以新建会话～")
 
+            # ===== 根据模式绑定按钮 =====
+            if mode == "multimodal" and self.multimodal_handler:
+                # 多模态模式：绑定 handler 的方法
+                self.ui0.btn_send_message.clicked.connect(self._on_multimodal_send)
+                self.ui0.btn_upload_file.clicked.connect(self._on_multimodal_upload)
+            else:
+                # 其他模式：绑定原有方法
+                self.ui0.btn_send_message.clicked.connect(self.SendMessageFunc)
+                self.ui0.btn_upload_file.clicked.connect(self.UploadFile)
+
+            # 切换输入框提示词
             self.input_placeholder = self.input_placeholder_presets.get(mode, "输入你想发送的消息～")
             self.ui0.text_message_input.setPlaceholderText(self.input_placeholder)
             self.ui0.text_message_input.clear()
@@ -713,6 +791,66 @@ class MainWindowWidget(QMainWindow):
             self.update_system_info("normal")
         finally:
             self._switching_mode = False
+
+    def _on_multimodal_upload(self):
+        """多模态模式上传文件"""
+        if not self.multimodal_handler:
+            self._init_multimodal_handler()
+
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "选择文件",
+            "",
+            "图片 (*.png *.jpg *.jpeg *.gif *.bmp *.webp);;文档 (*.pdf *.docx *.txt);;表格 (*.xlsx *.xls);;所有文件 (*)"
+        )
+        if file_path:
+            self.multimodal_handler.upload_file(file_path)
+
+    def _init_multimodal_handler(self):
+        """初始化多模态处理器"""
+        from multimodal_handler import MultimodalHandler
+
+        self.multimodal_handler = MultimodalHandler(
+            self,
+            self.web_displayer,
+            {
+                "MULTIMODAL_API_KEY": os.getenv("MULTIMODAL_API_KEY", ""),
+                "MULTIMODAL_API_URL": os.getenv("MULTIMODAL_API_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"),
+                "MULTIMODAL_PROVIDER": os.getenv("MULTIMODAL_PROVIDER", "qwen3-vl-plus"),
+            }
+        )
+
+        # 绑定信号，使用统一的消息处理函数
+        self.multimodal_handler.message_signal.connect(self._on_multimodal_message)
+        self.multimodal_handler.clear_webview_signal.connect(self.clear_webview)
+
+        if init_config.isInTestMode:
+            print("✅ 多模态处理器已初始化")
+
+    def _on_multimodal_message(self, msg_type, content):
+        """处理多模态处理器的消息信号"""
+        if msg_type == "user_preview":
+            # 图片预览：直接添加到 WebView，不保存到历史
+            self.add_message_to_webview(content)
+        elif msg_type == "system":
+            # 系统消息：正常显示，保存到历史
+            self.DisplayMessage("system", content)
+        elif msg_type in ["user", "assistant"]:
+            # 用户/助手消息：正常显示，保存到历史
+            self.DisplayMessage(msg_type, content)
+        else:
+            # 未知类型，按普通消息处理
+            self.DisplayMessage("system", content)
+
+    def _on_multimodal_send(self):
+        """多模态模式发送消息"""
+        if not self.multimodal_handler:
+            self._init_multimodal_handler()
+
+        user_text = self.ui0.text_message_input.toPlainText().strip()
+        self.multimodal_handler.send_message(user_text)
+        self.ui0.text_message_input.clear()
+        self.ui0.text_message_input.setPlainText(self.input_placeholder)
 
     def OnInputClick(self, event):
         # 先执行原来的mousePressEvent，保持光标正常
@@ -749,6 +887,8 @@ class MainWindowWidget(QMainWindow):
             return [{"role": "system", "content": research_system_prompt}]
         elif mode == "code":
             return [{"role": "system", "content": code_assistant_prompt}]
+        elif mode == "multimodal":
+            return [{"role": "system", "content": multimodal_system_prompt}]
         else:
             return [{"role": "system", "content": "模式切换状态读取失败，尝试输入你需要发送的消息。"}]
 
@@ -999,6 +1139,7 @@ class MainWindowWidget(QMainWindow):
                     model_sel = chat_mode_model_name
 
                 stream = client.chat.completions.create(model=model_sel,
+                                                        temperature=0.7,
                                                         messages=self.raw_message,
                                                         stream=True,
                                                         timeout=30,
@@ -1331,17 +1472,75 @@ class MainWindowWidget(QMainWindow):
         """
         self.web_displayer.setHtml(html_template)
 
+    def _display_image_in_chat(self, image_path):
+        """在聊天区域显示图片（从本地路径）"""
+        import time
+        import base64
+
+        # 读取图片转 Base64
+        with open(image_path, "rb") as f:
+            image_data = f.read()
+
+        ext = os.path.splitext(image_path)[1].lower()
+        mime_type = {
+            '.png': 'image/png',
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.gif': 'image/gif',
+            '.bmp': 'image/bmp',
+            '.webp': 'image/webp'
+        }.get(ext, 'image/png')
+
+        base64_str = base64.b64encode(image_data).decode('utf-8')
+        img_src = f"data:{mime_type};base64,{base64_str}"
+
+        html = f'''
+        <div class="message user" style="margin: 10px 0; padding: 10px; border-radius: 8px; background-color: #3a3a3a;">
+            <div class="timestamp" style="font-size: 12px; color: #999; margin-bottom: 5px;">{time.strftime('%H:%M:%S')}</div>
+            <div class="content">
+                <b>📸 图片：</b><br>
+                <img src="{img_src}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-top: 5px;">
+            </div>
+        </div>
+        '''
+
+        # 直接添加到 WebView
+        self.add_message_to_webview(html)
+
     # 统一显示消息，样式从环境变量读取
     def DisplayMessage(self, role, content):
         if isInTestMode:
             print(f"DEBUG: content type: {type(content)}, content preview: {content[:100]}")
+
+        # ===== 多模态图片解析 =====
+        if role == "user" and "【图片路径】" in content and "【图片路径结束】" in content:
+            import re
+            # 提取图片路径
+            match = re.search(r'【图片路径】(.*?)【图片路径结束】', content, re.DOTALL)
+            if match:
+                img_paths = match.group(1).split('|')
+                # 提取纯文本内容（去掉图片路径标记）
+                text_content = re.sub(r'【图片路径】.*?【图片路径结束】', '', content, flags=re.DOTALL)
+
+                # 先显示图片
+                for img_path in img_paths:
+                    if os.path.exists(img_path):
+                        # 直接发送图片消息到 WebView
+                        self._display_image_in_chat(img_path)
+
+                # 再显示文本（如果有）
+                if text_content.strip():
+                    # 继续用原有的渲染逻辑显示文本
+                    content = text_content
+                else:
+                    return  # 只有图片，没有文本，直接返回
 
         # 首先转义尖括号（但保留Markdown渲染后的HTML标签）
         if not (self.current_mode.startswith("research") or self.current_mode == "code"):
             content = content.replace('&lt;', '&lt;').replace('&gt;', '&gt;')
 
         # ---------- Markdown 渲染 ----------
-        if self.current_mode.startswith("research") or self.current_mode == "code" or self.current_mode == "chat":
+        if self.current_mode.startswith("research") or self.current_mode == "code" or self.current_mode == "chat" or self.current_mode == "multimodal":
             try:
                 import markdown
                 md = markdown.Markdown(extensions=['extra', 'nl2br', 'tables'])
@@ -1368,6 +1567,14 @@ class MainWindowWidget(QMainWindow):
                 bg = code_bg_1
                 prefix = user_prefix_code
                 # 输入框字体
+                input_font = QFont(font_family, font_size)
+                self.ui0.text_message_input.setFont(input_font)
+            elif self.current_mode == "multimodal":
+                font_family = multimodal_user_font_1
+                font_size = multimodal_user_size_1
+                color = multimodal_user_color_1
+                bg = multimodal_user_bg_1
+                prefix = user_prefix_multimodal
                 input_font = QFont(font_family, font_size)
                 self.ui0.text_message_input.setFont(input_font)
             else:
@@ -1405,6 +1612,12 @@ class MainWindowWidget(QMainWindow):
                 color = code_assistant_color
                 prefix = code_prefix_1
                 bg = code_bg_1
+            elif self.current_mode == "multimodal":
+                font_family = multimodal_assistant_font_1
+                font_size = multimodal_assistant_size_1
+                color = multimodal_assistant_color_1
+                prefix = multimodal_prefix_1
+                bg = multimodal_assistant_bg_1
             else:
                 font_family = assistant_font_1
                 font_size = assistant_size_1
@@ -1503,6 +1716,7 @@ class MainWindowWidget(QMainWindow):
                 "research_rag": "🔒 科研助手-线上结合本地知识库",
                 "research_local": "💻 科研助手-本地",
                 "code": "👨‍💻 代码助手",
+                "multimodal": "🖼️ 多模态助手",
             }
             mode_name = mode_names.get(self.current_mode, self.current_mode)
 
@@ -1811,6 +2025,16 @@ class MainWindowWidget(QMainWindow):
         if not self.current_session_id:
             return
 
+        # 🔧 如果是多模态模式，从 handler 获取最新的消息
+        if self.current_mode == "multimodal" and self.multimodal_handler:
+            self.raw_message = self.multimodal_handler.get_raw_message()
+            if init_config.isInTestMode:
+                print(f"🔍 从多模态处理器同步 {len(self.raw_message)} 条消息")
+
+        session_path = self.get_session_file_path(self.current_session_id)
+        if not self.current_session_id:
+            return
+
         session_path = self.get_session_file_path(self.current_session_id)
 
         filtered_messages = []
@@ -1862,6 +2086,12 @@ class MainWindowWidget(QMainWindow):
                 self.raw_message = json.load(f)
 
             self.current_session_id = session_id
+
+            # 🔧 如果是多模态模式，同步消息到 handler
+            if self.current_mode == "multimodal" and self.multimodal_handler:
+                self.multimodal_handler.set_raw_message(self.raw_message)
+                if init_config.isInTestMode:
+                    print(f"🔍 已同步 {len(self.raw_message)} 条消息到多模态处理器")
 
             # 刷新显示
             self.clear_webview()

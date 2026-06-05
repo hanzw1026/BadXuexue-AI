@@ -24,17 +24,24 @@ def get_default_env_content():
     platform_default_size = get_platform_default_font_size()
 
     return f'''# ==================== API 配置 ====================
+# 聊天模式 API
+CHAT_MODEL=deepseek-v4-flash
 CHAT_ASSISTANT_API_KEY=
 CHAT_ASSISTANT_API_URL=https://api.deepseek.com
 
+# 科研助手 API
+RESEARCH_MODEL=deepseek-v4-pro
 RESEARCH_ASSISTANT_API_KEY=
 RESEARCH_ASSISTANT_API_URL=
 
+# 代码助手 API
 CODE_ASSISTANT_API_KEY=
 CODE_ASSISTANT_API_URL=
 
-DOCUMENT_ASSISTANT_API_KEY=
-DOCUMENT_ASSISTANT_API_URL=
+# 多模态模型（图像助手）API
+MULTIMODAL_API_KEY=
+MULTIMODAL_API_URL=
+MULTIMODAL_PROVIDER=qwen3-vl-plus
 
 # 本地模式
 LOCAL_API_URL=http://localhost:11434
@@ -48,78 +55,96 @@ WINDOW_TITLE=雪雪的AI助手
 INPUT_PLACEHOLDER_CHAT=输入你想发送的消息～
 INPUT_PLACEHOLDER_RESEARCH=把文件草稿给我，并准确描述你的要求。
 INPUT_PLACEHOLDER_CODE=代码遇到了什么问题呢？
+INPUT_PLACEHOLDER_MULTIMODAL=上传图片，告诉我你想怎么处理～
 
 # 系统消息文本
 SYSTEM_WELCOME_TITLE=🐱 欢迎使用雪雪AI助手！
 SYSTEM_WELCOME_CONFIG_PATH=📝 首次运行已自动生成配置文件：
-SYSTEM_WELCOME_FILL_KEY=🔑 请用记事本打开该文件，填写你的 DeepSeek API Key：
+SYSTEM_WELCOME_FILL_KEY=🔑 请在系统设置菜单中填写你的 API Key
 SYSTEM_WELCOME_NO_KEY=⚠️ 检测到 API Key 未配置
-SYSTEM_WELCOME_EDIT_KEY=📝 修改 CHAT_ASSISTANT_API_KEY= 后面的内容为你的密钥
+SYSTEM_WELCOME_EDIT_KEY=📝 在设置菜单中填写 CHAT_ASSISTANT_API_KEY
 SYSTEM_WELCOME_GET_KEY=💡 访问 platform.deepseek.com 注册获取（新用户有免费额度）
 SYSTEM_WELCOME_LOCAL_MODE=💡 可以先用【科研助理-本地模式】（需要安装 Ollama）
 SYSTEM_CONFIG_UPDATED=✨ 配置已更新，新设置已生效。
 SYSTEM_CONFIG_RELOAD=✨ 配置已更新，新设置已生效。
 
-# ==================== 用户默认设置 ====================
-# 用户字体（留空为系统默认）
+# ==================== 聊天模式 ====================
+# 用户设置
 USER_FONT_1=
 USER_SIZE_1={platform_default_size}
-USER_COLOR_1=#FFFFFB
+USER_COLOR_1=#e56013
 USER_BG_1=
-
-# 聊天模式用户昵称
 USER_PREFIX_CHAT=用户：
-# 科研助理模式用户昵称
-USER_PREFIX_RESEARCH=📊用户：
-# 代码助手模式用户昵称
-USER_PREFIX_CODE=👨‍💻用户：
 
-# ==================== 助手默认设置 ====================
-# 聊天模式助手字体
+# 助手设置
 ASSISTANT_FONT_1=
 ASSISTANT_SIZE_1={platform_default_size}
-ASSISTANT_COLOR_1=#FFFFFB
+ASSISTANT_COLOR_1=#d663ff
 ASSISTANT_BG_1=
-# 聊天对象昵称
-ASSISTANT_PREFIX=助手：
-# 聊天对象人设
-CHAT_ASSISTANT_PROMPT="你是AI助手，提供专业、友好的回答。请用简洁清晰的语言帮助用户。"
+ASSISTANT_PREFIX=聊天助手：
+CHAT_ASSISTANT_PROMPT=你是AI助手，提供专业、友好的回答。请用简洁清晰的语言帮助用户。
 
-# 科研助手
-RESEARCH_USER_FONT=""
+# ==================== 科研助手 ====================
+# 用户设置
+RESEARCH_USER_FONT=
 RESEARCH_USER_SIZE={platform_default_size}
-RESEARCH_USER_COLOR=#2E86AB
-RESEARCH_ASSISTANT_FONT=""
-RESEARCH_ASSISTANT_SIZE={platform_default_size}
-RESEARCH_ASSISTANT_COLOR=#2E86AB
+RESEARCH_USER_COLOR=#d2d1d3
+RESEARCH_USER_BG=
+USER_PREFIX_RESEARCH=📊科研助手：
 
-# 代码助手
-CODE_USER_FONT=""
+# 助手设置
+RESEARCH_ASSISTANT_FONT=
+RESEARCH_ASSISTANT_SIZE={platform_default_size}
+RESEARCH_ASSISTANT_COLOR=#1e9be5
+RESEARCH_ASSISTANT_BG=
+RESEARCH_PREFIX_1=📊科研助理-在线模式：
+RESEARCH_PREFIX_2=🔒科研助手（RAG）：
+RESEARCH_PREFIX_3=💻科研助手（本地）：
+RESEARCH_SYSTEM_PROMPT=科研助理模式
+
+# ==================== 代码助手 ====================
+# 用户设置
+CODE_USER_FONT=
 CODE_USER_SIZE={platform_default_size}
 CODE_USER_COLOR=#28A745
-CODE_ASSISTANT_FONT=""
+CODE_USER_BG=
+USER_PREFIX_CODE=👨‍💻用户：
+
+# 助手设置
+CODE_ASSISTANT_FONT=
 CODE_ASSISTANT_SIZE={platform_default_size}
 CODE_ASSISTANT_COLOR=#28A745
+CODE_ASSISTANT_BG=
+CODE_PREFIX=👨‍💻代码助手：
+CODE_ASSISTANT_PROMPT=你是AI代码助手，帮助用户解决编程问题
 
-# 文档助手
-DOCUMENT_USER_FONT=""
-DOCUMENT_ASSISTANT_FONT=""
-DOCUMENT_USER_SIZE={platform_default_size}
-DOCUMENT_ASSISTANT_SIZE={platform_default_size}
-DOCUMENT_USER_COLOR=#2E86AB
-DOCUMENT_ASSISTANT_COLOR=#2E86AB
+# ==================== 多模态模型（图像助手）====================
+# 用户设置
+MULTIMODAL_USER_FONT=
+MULTIMODAL_USER_SIZE={platform_default_size}
+MULTIMODAL_USER_COLOR=#9b59b6
+MULTIMODAL_USER_BG=
+USER_PREFIX_MULTIMODAL=📸用户：
 
-# 系统消息
+# 助手设置
+MULTIMODAL_ASSISTANT_FONT=
+MULTIMODAL_ASSISTANT_SIZE={platform_default_size}
+MULTIMODAL_ASSISTANT_COLOR=#9b59b6
+MULTIMODAL_ASSISTANT_BG=
+MULTIMODAL_PREFIX=🖼️多模态和图像助手：
+MULTIMODAL_SYSTEM_PROMPT=你是多模态和图像助手
+
+# ==================== 系统消息样式 ====================
 SYSTEM_FONT_1=
 SYSTEM_SIZE_1={platform_default_size}
-SYSTEM_COLOR_1=#FFFFFB
+SYSTEM_COLOR_1=#999999
 SYSTEM_PREFIX_1=系统
 SYSTEM_STYLE_1=italic
 
-# 输入框
+# ==================== 输入框样式 ====================
 INPUT_FONT_1=
 INPUT_SIZE_1={platform_default_size}
-INPUT_COLOR_1=#FFFFFB
+INPUT_COLOR_1=#333333
 INPUT_BG_1=#FFFFFF
 INPUT_PLACEHOLDER_COLOR_1=#EAE6CA
 

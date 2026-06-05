@@ -3,6 +3,8 @@
 
 import os
 import re
+
+from PySide6 import QtWidgets
 from PySide6.QtWidgets import QDialog, QMessageBox, QColorDialog, QFileDialog, QApplication, QLineEdit, QLabel, QPushButton, QComboBox, QFontComboBox
 from PySide6.QtCore import Qt
 
@@ -126,10 +128,10 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         # ========== 1. API 设置 ==========
         self.edit_chat_api_key.setText(self.chat_api_key)
         self.edit_research_api_key.setText(self.research_api_key)
-        self.edit_document_api_key.setText(self.document_api_key)
+        self.edit_multimodal_api_key.setText(self.multimodal_api_key)
         self.edit_chat_api_url.setText(self.chat_api_url)
         self.edit_research_api_url.setText(self.research_api_url)
-        self.edit_document_api_url.setText(self.document_api_url)
+        self.edit_multimodal_api_url.setText(self.multimodal_api_url)
         self.edit_local_api_url.setText(self.local_api_url)
         self.edit_local_model.setText(self.local_model)
 
@@ -196,25 +198,30 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         self.color_values["code_assistant"] = self.code_assistant_color
         self.btn_code_assisant_color.setStyleSheet(f"background-color: {self.code_assistant_color};")
 
-        # ========== 5. 文档助手模式 ==========
-        self.edit_document_user_prefix.setText(self.document_user_prefix)
-        self.edit_document_assistant_prefix.setText(self.document_assistant_prefix)
-        self.edit_document_assistant_prompt.setText(self.document_assistant_prompt)
+        # ========== 多模态（图像助手）==========
+        self.edit_multimodal_user_prefix.setText(self.user_prefix_multimodal)
+        self.edit_multimodal_assistant_prefix.setText(self.multimodal_assistant_prefix)
+        self.edit_multimodal_assistant_prompt.setText(self.multimodal_system_prompt)
 
-        idx = self.combo_document_user_size.findText(self.document_user_size)
+        # 模型名称显示
+        self.edit_chat_model_setting.setText(self.chat_model)
+        self.edit_research_model_setting.setText(self.research_model)
+        self.edit_multimodal_setting.setText(self.multimodal_model)
+
+        idx = self.combo_multimodal_user_size.findText(self.multimodal_user_size)
         if idx >= 0:
-            self.combo_document_user_size.setCurrentIndex(idx)
-        idx = self.edit_document_assistant_size.findText(self.document_assistant_size)
+            self.combo_multimodal_user_size.setCurrentIndex(idx)
+        idx = self.combo_multimodal_assistant_size.findText(self.multimodal_assistant_size)
         if idx >= 0:
-            self.edit_document_assistant_size.setCurrentIndex(idx)
+            self.combo_multimodal_assistant_size.setCurrentIndex(idx)
 
-        self._refresh_font_combo(self.combo_document_user_font, self.document_user_font)
-        self._refresh_font_combo(self.edit_document_assistant_font, self.document_assistant_font)
+        self._refresh_font_combo(self.combo_multimodal_user_font, self.multimodal_user_font)
+        self._refresh_font_combo(self.edit_multimodal_assistant_font, self.multimodal_assistant_font)
 
-        self.color_values["document_user"] = self.document_user_color
-        self.btn_document_user_color.setStyleSheet(f"background-color: {self.document_user_color};")
-        self.color_values["document_assistant"] = self.document_assistant_color
-        self.btn_document_assisant_color.setStyleSheet(f"background-color: {self.document_assistant_color};")
+        self.color_values["multimodal_user"] = self.multimodal_user_color
+        self.btn_multimodal_user_color.setStyleSheet(f"background-color: {self.multimodal_user_color};")
+        self.color_values["multimodal_assistant"] = self.multimodal_assistant_color
+        self.btn_multimodal_assisant_color.setStyleSheet(f"background-color: {self.multimodal_assistant_color};")
 
         if init_config.isInTestMode:
             print("✅ 设置窗口 UI 刷新完成")
@@ -235,9 +242,9 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         self.combo_code_user_size.addItems(sizes)
         self.edit_code_assistant_size.addItems(sizes)
 
-        # 文档助手页
-        self.combo_document_user_size.addItems(sizes)
-        self.edit_document_assistant_size.addItems(sizes)
+        # ===== 多模态（图像助手）=====
+        self.combo_multimodal_user_size.addItems(sizes)
+        self.combo_multimodal_assistant_size.addItems(sizes)
 
     def connect_signals(self):
         """连接所有信号"""
@@ -259,8 +266,8 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         self.btn_research_assisant_color.clicked.connect(lambda: self.choose_color("research_assistant"))
         self.btn_code_user_color.clicked.connect(lambda: self.choose_color("code_user"))
         self.btn_code_assisant_color.clicked.connect(lambda: self.choose_color("code_assistant"))
-        self.btn_document_user_color.clicked.connect(lambda: self.choose_color("document_user"))
-        self.btn_document_assisant_color.clicked.connect(lambda: self.choose_color("document_assistant"))
+        self.btn_multimodal_user_color.clicked.connect(lambda: self.choose_color("multimodal_user"))
+        self.btn_multimodal_assisant_color.clicked.connect(lambda: self.choose_color("multimodal_assistant"))
 
     def choose_color(self, target):
         """打开颜色选择器"""
@@ -365,10 +372,8 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         # ===== API 设置 =====
         self.chat_api_key = self.config.get("CHAT_ASSISTANT_API_KEY", "")
         self.research_api_key = self.config.get("RESEARCH_ASSISTANT_API_KEY", "")
-        self.document_api_key = self.config.get("DOCUMENT_ASSISTANT_API_KEY", "")
         self.chat_api_url = self.config.get("CHAT_ASSISTANT_API_URL", "https://api.deepseek.com")
         self.research_api_url = self.config.get("RESEARCH_ASSISTANT_API_URL", "https://api.deepseek.com")
-        self.document_api_url = self.config.get("DOCUMENT_ASSISTANT_API_URL", "https://api.deepseek.com")
         self.local_api_url = self.config.get("LOCAL_API_URL", "http://localhost:11434")
         self.local_model = self.config.get("LOCAL_MODEL", "deepseek-r1:7b")
 
@@ -408,17 +413,26 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         self.code_user_color = self.config.get("CODE_USER_COLOR", "#28A745")
         self.code_assistant_color = self.config.get("CODE_ASSISTANT_COLOR", "#28A745")
 
-        # ===== 文档助手模式（共用科研配置）=====
-        self.document_user_prefix = self.config.get("DOCUMENT_USER_PREFIX", "📊用户：")
-        self.document_assistant_prefix = self.config.get("DOCUMENT_ASSISTANT_PREFIX", "📊文档助手：")
-        self.document_assistant_prompt = self.config.get("DOCUMENT_ASSISTANT_PROMPT", "文档助手模式")
+        # ===== 多模态（图像助手）=====
+        self.multimodal_provider = self.config.get("MULTIMODAL_PROVIDER", "")
+        self.multimodal_api_key = self.config.get("MULTIMODAL_API_KEY", "")
+        self.multimodal_api_url = self.config.get("MULTIMODAL_API_URL", "")
 
-        self.document_user_font = self.config.get("DOCUMENT_USER_FONT", "")
-        self.document_assistant_font = self.config.get("DOCUMENT_ASSISTANT_FONT", "")
-        self.document_user_size = self.config.get("DOCUMENT_USER_SIZE", "16")
-        self.document_assistant_size = self.config.get("DOCUMENT_ASSISTANT_SIZE", "16")
-        self.document_user_color = self.config.get("DOCUMENT_USER_COLOR", "#2E86AB")
-        self.document_assistant_color = self.config.get("DOCUMENT_ASSISTANT_COLOR", "#2E86AB")
+        self.user_prefix_multimodal = self.config.get("USER_PREFIX_MULTIMODAL", "📸用户：")
+        self.multimodal_assistant_prefix = self.config.get("MULTIMODAL_PREFIX", "🖼️多模态和图像助手：")
+        self.multimodal_system_prompt = self.config.get("MULTIMODAL_SYSTEM_PROMPT", "你是多模态和图像助手")
+
+        self.multimodal_user_font = self.config.get("MULTIMODAL_USER_FONT", "")
+        self.multimodal_assistant_font = self.config.get("MULTIMODAL_ASSISTANT_FONT", "")
+        self.multimodal_user_size = self.config.get("MULTIMODAL_USER_SIZE", str(DEFAULT_FONT_SIZE))
+        self.multimodal_assistant_size = self.config.get("MULTIMODAL_ASSISTANT_SIZE", str(DEFAULT_FONT_SIZE))
+        self.multimodal_user_color = self.config.get("MULTIMODAL_USER_COLOR", "#9b59b6")
+        self.multimodal_assistant_color = self.config.get("MULTIMODAL_ASSISTANT_COLOR", "#9b59b6")
+
+        # ===== 模型名称设置（新增）=====
+        self.chat_model = self.config.get("CHAT_MODEL", "")
+        self.research_model = self.config.get("RESEARCH_MODEL", "")
+        self.multimodal_model = self.config.get("MULTIMODAL_PROVIDER", "")
 
         if init_config.isInTestMode:
             print(f"   📝 科研用户前缀: {self.research_user_prefix}")
@@ -447,10 +461,6 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         code_user_font_name = self.edit_code_user_font.currentFont().family()
         code_assistant_font_name = self.edit_code_assistant_font.currentFont().family()
 
-        # 文档模式（共用科研字体）
-        doc_user_font_name = self.combo_document_user_font.currentFont().family()
-        doc_assistant_font_name = self.edit_document_assistant_font.currentFont().family()
-
         if init_config.isInTestMode:
             print(f"📝 保存字体: 聊天用户={user_font_name}, 聊天助手={assistant_font_name}")
             print(f"   科研用户={research_user_font_name}, 科研助手={research_assistant_font_name}")
@@ -469,8 +479,6 @@ class SettingDialog(QDialog, Ui_SettingDialog):
             "CHAT_ASSISTANT_API_URL": self.edit_chat_api_url.text().strip(),
             "RESEARCH_ASSISTANT_API_KEY": self.edit_research_api_key.text().strip(),
             "RESEARCH_ASSISTANT_API_URL": self.edit_research_api_url.text().strip(),
-            "DOCUMENT_ASSISTANT_API_KEY": self.edit_document_api_key.text().strip(),
-            "DOCUMENT_ASSISTANT_API_URL": self.edit_document_api_url.text().strip(),
             "LOCAL_API_URL": self.edit_local_api_url.text().strip(),
             "LOCAL_MODEL": self.edit_local_model.text().strip(),
 
@@ -510,16 +518,25 @@ class SettingDialog(QDialog, Ui_SettingDialog):
             "CODE_ASSISTANT_COLOR": self.color_values.get("code_assistant", "#28A745"),
             "CODE_ASSISTANT_PROMPT": self.edit_code_assistant_prompt.text().strip(),
 
-            # ===== 文档助手模式 =====
-            "DOCUMENT_USER_PREFIX": self.edit_document_user_prefix.text().strip(),
-            "DOCUMENT_ASSISTANT_PREFIX": self.edit_document_assistant_prefix.text().strip(),
-            "DOCUMENT_ASSISTANT_PROMPT": self.edit_document_assistant_prompt.text().strip(),
-            "DOCUMENT_USER_FONT": f'"{doc_user_font_name}"',
-            "DOCUMENT_ASSISTANT_FONT": f'"{doc_assistant_font_name}"',
-            "DOCUMENT_USER_SIZE": self.combo_document_user_size.currentText(),
-            "DOCUMENT_ASSISTANT_SIZE": self.edit_document_assistant_size.currentText(),
-            "DOCUMENT_USER_COLOR": self.color_values.get("document_user", "#2E86AB"),
-            "DOCUMENT_ASSISTANT_COLOR": self.color_values.get("document_assistant", "#2E86AB"),
+            # ===== 多模态（图像助手）=====
+            "MULTIMODAL_API_KEY": self.edit_multimodal_api_key.text().strip(),
+            "MULTIMODAL_API_URL": self.edit_multimodal_api_url.text().strip(),
+
+            "USER_PREFIX_MULTIMODAL": self.edit_multimodal_user_prefix.text().strip(),
+            "MULTIMODAL_PREFIX": self.edit_multimodal_assistant_prefix.text().strip(),
+            "MULTIMODAL_SYSTEM_PROMPT": self.edit_multimodal_assistant_prompt.text().strip(),
+
+            "MULTIMODAL_USER_FONT": f'"{self.combo_multimodal_user_font.currentFont().family()}"',
+            "MULTIMODAL_ASSISTANT_FONT": f'"{self.edit_multimodal_assistant_font.currentFont().family()}"',
+            "MULTIMODAL_USER_SIZE": self.combo_multimodal_user_size.currentText(),
+            "MULTIMODAL_ASSISTANT_SIZE": self.combo_multimodal_assistant_size.currentText(),
+            "MULTIMODAL_USER_COLOR": self.color_values.get("multimodal_user", "#9b59b6"),
+            "MULTIMODAL_ASSISTANT_COLOR": self.color_values.get("multimodal_assistant", "#9b59b6"),
+
+            # 模型名称
+            "CHAT_MODEL": self.edit_chat_model_setting.text().strip(),
+            "RESEARCH_MODEL": self.edit_research_model_setting.text().strip(),
+            "MULTIMODAL_PROVIDER": self.edit_multimodal_setting.text().strip(),
         }
 
         # ===== 写回文件 =====
@@ -579,10 +596,10 @@ class SettingDialog(QDialog, Ui_SettingDialog):
             # 保存当前 API 配置
             current_chat_key = self.edit_chat_api_key.text()
             current_research_key = self.edit_research_api_key.text()
-            current_doc_key = self.edit_document_api_key.text()
+            current_multimodal_key = self.edit_multimodal_api_key.text()
             current_chat_url = self.edit_chat_api_url.text()
             current_research_url = self.edit_research_api_url.text()
-            current_doc_url = self.edit_document_api_url.text()
+            current_multimodal_url = self.edit_multimodal_api_url.text()
             current_local_url = self.edit_local_api_url.text()
             current_local_model = self.edit_local_model.text()
 
@@ -673,44 +690,46 @@ class SettingDialog(QDialog, Ui_SettingDialog):
             self.color_values["code_assistant"] = code_assistant_color
             self.btn_code_assisant_color.setStyleSheet(f"background-color: {code_assistant_color};")
 
-            # ===== 恢复文档助手设置 =====
-            self.edit_document_user_prefix.setText(default_config.get("DOCUMENT_USER_PREFIX", "📊用户："))
-            self.edit_document_assistant_prefix.setText(default_config.get("DOCUMENT_ASSISTANT_PREFIX", "📊文档助手："))
-            self.edit_document_assistant_prompt.setText(default_config.get("DOCUMENT_ASSISTANT_PROMPT", "文档助手模式"))
+            # ===== 恢复多模态（图像助手）设置 =====
+            self.edit_multimodal_user_prefix.setText(default_config.get("USER_PREFIX_MULTIMODAL", "📸用户："))
+            self.edit_multimodal_assistant_prefix.setText(default_config.get("MULTIMODAL_PREFIX", "🖼️多模态和图像助手："))
+            self.edit_multimodal_assistant_prompt.setText(default_config.get("MULTIMODAL_SYSTEM_PROMPT", "你是多模态和图像助手"))
 
-            # 字体（恢复为空字符串）
-            self._reset_font_to_default(self.combo_document_user_font)
-            self._reset_font_to_default(self.edit_document_assistant_font)
+            self._reset_font_to_default(self.combo_multimodal_user_font)
+            self._reset_font_to_default(self.edit_multimodal_assistant_font)
 
-            # 字体大小
-            doc_user_size = default_config.get("DOCUMENT_USER_SIZE", "16")
-            idx = self.combo_document_user_size.findText(doc_user_size)
+            multimodal_user_size = default_config.get("MULTIMODAL_USER_SIZE", str(DEFAULT_FONT_SIZE))
+            idx = self.combo_multimodal_user_size.findText(multimodal_user_size)
             if idx >= 0:
-                self.combo_document_user_size.setCurrentIndex(idx)
+                self.combo_multimodal_user_size.setCurrentIndex(idx)
 
-            doc_assistant_size = default_config.get("DOCUMENT_ASSISTANT_SIZE", "16")
-            idx = self.edit_document_assistant_size.findText(doc_assistant_size)
+            multimodal_assistant_size = default_config.get("MULTIMODAL_ASSISTANT_SIZE", str(DEFAULT_FONT_SIZE))
+            idx = self.combo_multimodal_assistant_size.findText(multimodal_assistant_size)
             if idx >= 0:
-                self.edit_document_assistant_size.setCurrentIndex(idx)
+                self.combo_multimodal_assistant_size.setCurrentIndex(idx)
 
-            # 颜色
-            doc_user_color = default_config.get("DOCUMENT_USER_COLOR", "#2E86AB")
-            self.color_values["document_user"] = doc_user_color
-            self.btn_document_user_color.setStyleSheet(f"background-color: {doc_user_color};")
+            multimodal_user_color = default_config.get("MULTIMODAL_USER_COLOR", "#9b59b6")
+            self.color_values["multimodal_user"] = multimodal_user_color
+            self.btn_multimodal_user_color.setStyleSheet(f"background-color: {multimodal_user_color};")
 
-            doc_assistant_color = default_config.get("DOCUMENT_ASSISTANT_COLOR", "#2E86AB")
-            self.color_values["document_assistant"] = doc_assistant_color
-            self.btn_document_assisant_color.setStyleSheet(f"background-color: {doc_assistant_color};")
+            multimodal_assistant_color = default_config.get("MULTIMODAL_ASSISTANT_COLOR", "#9b59b6")
+            self.color_values["multimodal_assistant"] = multimodal_assistant_color
+            self.btn_multimodal_assisant_color.setStyleSheet(f"background-color: {multimodal_assistant_color};")
 
             # ===== 恢复 API 设置（保留当前值）=====
             self.edit_chat_api_key.setText(current_chat_key)
             self.edit_research_api_key.setText(current_research_key)
-            self.edit_document_api_key.setText(current_doc_key)
+            self.edit_multimodal_api_key.setText(current_multimodal_key)
             self.edit_chat_api_url.setText(current_chat_url)
             self.edit_research_api_url.setText(current_research_url)
-            self.edit_document_api_url.setText(current_doc_url)
+            self.edit_multimodal_api_url.setText(current_multimodal_url)
             self.edit_local_api_url.setText(current_local_url)
             self.edit_local_model.setText(current_local_model)
+
+            # 恢复模型名称默认值
+            self.edit_chat_model_setting.setText(default_config.get("CHAT_MODEL", "deepseek-v4-flash"))
+            self.edit_research_model_setting.setText(default_config.get("RESEARCH_MODEL", "deepseek-v4-pro"))
+            self.edit_multimodal_setting.setText(default_config.get("MULTIMODAL_PROVIDER", "qwen3-vl-plus"))
 
             QMessageBox.information(self, "已恢复", "已恢复默认设置（API Key、URL 和聊天记录已保留），点击应用保存。")
 
@@ -747,28 +766,92 @@ class SettingDialog(QDialog, Ui_SettingDialog):
             QMessageBox.information(self, "导入成功", "设置已导入，点击应用保存。")
 
     def export_chat_history(self):
-        """导出聊天记录"""
+        """导出当前模式的所有聊天记录（打包成 zip）"""
+        from PySide6.QtWidgets import QFileDialog
+        import zipfile
+        import os
+
+        # 获取当前模式对应的 sessions 目录
+        mode = getattr(self.parent(), 'current_mode', 'chat') if self.parent() else 'chat'
+        sessions_dir = os.path.join(init_config.get_internal_dir(), "sessions", mode)
+
+        if not os.path.exists(sessions_dir) or not os.listdir(sessions_dir):
+            QMessageBox.warning(self, "无记录", f"当前模式（{mode}）下没有聊天记录可导出。")
+            return
+
+        # 选择保存路径
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "导出聊天记录", "", "JSON文件 (*.json);;所有文件 (*)"
+            self, "导出聊天记录", f"snowai_{mode}_chat_history", "ZIP压缩包 (*.zip);;所有文件 (*)"
         )
-        if file_path:
-            internal_dir = init_config.get_internal_dir()
-            history_path = os.path.join(internal_dir, "chat_history.json")
-            if os.path.exists(history_path):
-                import shutil
-                shutil.copy2(history_path, file_path)
-                QMessageBox.information(self, "导出成功", f"聊天记录已导出到:\n{file_path}")
-            else:
-                QMessageBox.warning(self, "无记录", "没有找到聊天记录文件。")
+        if not file_path:
+            return
+
+        try:
+            with zipfile.ZipFile(file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(sessions_dir):
+                    for file in files:
+                        if file.endswith('.json'):
+                            full_path = os.path.join(root, file)
+                            arcname = os.path.relpath(full_path, sessions_dir)
+                            zipf.write(full_path, arcname)
+            QMessageBox.information(self, "导出成功", f"已导出 {len(zipf.namelist())} 个会话记录到:\n{file_path}")
+        except Exception as e:
+            QMessageBox.warning(self, "导出失败", f"导出聊天记录时出错：{str(e)}")
 
     def import_chat_history(self):
-        """导入聊天记录"""
+        """导入聊天记录（从 zip 包恢复 sessions）"""
+        from PySide6.QtWidgets import QFileDialog, QMessageBox
+        import zipfile
+        import os
+        import shutil
+
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "导入聊天记录", "", "JSON文件 (*.json);;所有文件 (*)"
+            self, "导入聊天记录", "", "ZIP压缩包 (*.zip);;所有文件 (*)"
         )
-        if file_path:
-            internal_dir = init_config.get_internal_dir()
-            history_path = os.path.join(internal_dir, "chat_history.json")
-            import shutil
-            shutil.copy2(file_path, history_path)
-            QMessageBox.information(self, "导入成功", "聊天记录已导入，重启程序后生效。")
+        if not file_path:
+            return
+
+        # 确认导入
+        reply = QMessageBox.question(
+            self, "确认导入",
+            "导入将覆盖当前模式下的同名会话记录。\n\n是否继续？",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        mode = getattr(self.parent(), 'current_mode', 'chat') if self.parent() else 'chat'
+        sessions_dir = os.path.join(init_config.get_internal_dir(), "sessions", mode)
+        os.makedirs(sessions_dir, exist_ok=True)
+
+        try:
+            with zipfile.ZipFile(file_path, 'r') as zipf:
+                # 先检查 zip 内是否有非法路径
+                for member in zipf.namelist():
+                    if '..' in member or member.startswith('/'):
+                        QMessageBox.warning(self, "导入失败", "压缩包包含非法路径，已拒绝导入。")
+                        return
+
+                # 备份现有文件（可选）
+                backup_dir = None
+                if os.listdir(sessions_dir):
+                    import time
+                    backup_dir = os.path.join(init_config.get_internal_dir(), "sessions", f"{mode}_backup_{int(time.time())}")
+                    shutil.copytree(sessions_dir, backup_dir)
+                    if init_config.isInTestMode:
+                        print(f"📦 已备份原会话到: {backup_dir}")
+
+                # 解压覆盖
+                zipf.extractall(sessions_dir)
+
+            # 刷新主窗口的 session 列表
+            if self.parent() and hasattr(self.parent(), 'load_session_list'):
+                self.parent().load_session_list()
+                QMessageBox.information(self, "导入成功", f"聊天记录已导入。\n\n如有需要，备份文件位于:\n{backup_dir}" if backup_dir else "聊天记录已导入。")
+            else:
+                QMessageBox.information(self, "导入成功", "聊天记录已导入，重启程序后生效。")
+
+        except zipfile.BadZipFile:
+            QMessageBox.warning(self, "导入失败", "文件损坏或不是有效的 zip 压缩包。")
+        except Exception as e:
+            QMessageBox.warning(self, "导入失败", f"导入聊天记录时出错：{str(e)}")

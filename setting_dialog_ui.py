@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'SettingDialog.ui'
+## Form generated from reading UI file 'SettingDialogV3.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.0
 ##
@@ -24,7 +24,7 @@ class Ui_SettingDialog(object):
     def setupUi(self, SettingDialog):
         if not SettingDialog.objectName():
             SettingDialog.setObjectName(u"SettingDialog")
-        SettingDialog.resize(732, 744)
+        SettingDialog.resize(788, 743)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -39,11 +39,16 @@ class Ui_SettingDialog(object):
         self.tab_setting = QTabWidget(SettingDialog)
         self.tab_setting.setObjectName(u"tab_setting")
         self.tab_setting.setMinimumSize(QSize(0, 0))
-        self.tab_setting.setMaximumSize(QSize(1000, 1000))
+        self.tab_setting.setMaximumSize(QSize(4096, 4096))
         font = QFont()
         font.setPointSize(16)
         self.tab_setting.setFont(font)
-        self.tab_setting.setIconSize(QSize(16, 16))
+        self.tab_setting.setIconSize(QSize(60, 20))
+        self.tab_setting.setElideMode(Qt.TextElideMode.ElideNone)
+        self.tab_setting.setUsesScrollButtons(True)
+        self.tab_setting.setDocumentMode(False)
+        self.tab_setting.setTabsClosable(False)
+        self.tab_setting.setMovable(True)
         self.tab_api_setting = QWidget()
         self.tab_api_setting.setObjectName(u"tab_api_setting")
         sizePolicy.setHeightForWidth(self.tab_api_setting.sizePolicy().hasHeightForWidth())
@@ -52,6 +57,30 @@ class Ui_SettingDialog(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.horizontalLayout_47 = QHBoxLayout()
+        self.horizontalLayout_47.setObjectName(u"horizontalLayout_47")
+        self.label_45 = QLabel(self.tab_api_setting)
+        self.label_45.setObjectName(u"label_45")
+        sizePolicy.setHeightForWidth(self.label_45.sizePolicy().hasHeightForWidth())
+        self.label_45.setSizePolicy(sizePolicy)
+        self.label_45.setFont(font)
+        self.label_45.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_47.addWidget(self.label_45)
+
+        self.edit_chat_model_setting = QLineEdit(self.tab_api_setting)
+        self.edit_chat_model_setting.setObjectName(u"edit_chat_model_setting")
+        sizePolicy.setHeightForWidth(self.edit_chat_model_setting.sizePolicy().hasHeightForWidth())
+        self.edit_chat_model_setting.setSizePolicy(sizePolicy)
+        self.edit_chat_model_setting.setFont(font)
+
+        self.horizontalLayout_47.addWidget(self.edit_chat_model_setting)
+
+        self.horizontalLayout_47.setStretch(0, 1)
+        self.horizontalLayout_47.setStretch(1, 3)
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_47)
+
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.label = QLabel(self.tab_api_setting)
@@ -105,6 +134,30 @@ class Ui_SettingDialog(object):
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
+        self.horizontalLayout_48 = QHBoxLayout()
+        self.horizontalLayout_48.setObjectName(u"horizontalLayout_48")
+        self.label_46 = QLabel(self.tab_api_setting)
+        self.label_46.setObjectName(u"label_46")
+        sizePolicy.setHeightForWidth(self.label_46.sizePolicy().hasHeightForWidth())
+        self.label_46.setSizePolicy(sizePolicy)
+        self.label_46.setFont(font)
+        self.label_46.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_48.addWidget(self.label_46)
+
+        self.edit_research_model_setting = QLineEdit(self.tab_api_setting)
+        self.edit_research_model_setting.setObjectName(u"edit_research_model_setting")
+        sizePolicy.setHeightForWidth(self.edit_research_model_setting.sizePolicy().hasHeightForWidth())
+        self.edit_research_model_setting.setSizePolicy(sizePolicy)
+        self.edit_research_model_setting.setFont(font)
+
+        self.horizontalLayout_48.addWidget(self.edit_research_model_setting)
+
+        self.horizontalLayout_48.setStretch(0, 1)
+        self.horizontalLayout_48.setStretch(1, 3)
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_48)
+
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.label_3 = QLabel(self.tab_api_setting)
@@ -157,6 +210,30 @@ class Ui_SettingDialog(object):
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 
+        self.horizontalLayout_49 = QHBoxLayout()
+        self.horizontalLayout_49.setObjectName(u"horizontalLayout_49")
+        self.label_47 = QLabel(self.tab_api_setting)
+        self.label_47.setObjectName(u"label_47")
+        sizePolicy.setHeightForWidth(self.label_47.sizePolicy().hasHeightForWidth())
+        self.label_47.setSizePolicy(sizePolicy)
+        self.label_47.setFont(font)
+        self.label_47.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_49.addWidget(self.label_47)
+
+        self.edit_multimodal_setting = QLineEdit(self.tab_api_setting)
+        self.edit_multimodal_setting.setObjectName(u"edit_multimodal_setting")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_setting.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_setting.setSizePolicy(sizePolicy)
+        self.edit_multimodal_setting.setFont(font)
+
+        self.horizontalLayout_49.addWidget(self.edit_multimodal_setting)
+
+        self.horizontalLayout_49.setStretch(0, 1)
+        self.horizontalLayout_49.setStretch(1, 3)
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_49)
+
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.label_6 = QLabel(self.tab_api_setting)
@@ -168,13 +245,13 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_6.addWidget(self.label_6)
 
-        self.edit_document_api_key = QLineEdit(self.tab_api_setting)
-        self.edit_document_api_key.setObjectName(u"edit_document_api_key")
-        sizePolicy.setHeightForWidth(self.edit_document_api_key.sizePolicy().hasHeightForWidth())
-        self.edit_document_api_key.setSizePolicy(sizePolicy)
-        self.edit_document_api_key.setFont(font)
+        self.edit_multimodal_api_key = QLineEdit(self.tab_api_setting)
+        self.edit_multimodal_api_key.setObjectName(u"edit_multimodal_api_key")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_api_key.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_api_key.setSizePolicy(sizePolicy)
+        self.edit_multimodal_api_key.setFont(font)
 
-        self.horizontalLayout_6.addWidget(self.edit_document_api_key)
+        self.horizontalLayout_6.addWidget(self.edit_multimodal_api_key)
 
         self.horizontalLayout_6.setStretch(0, 1)
         self.horizontalLayout_6.setStretch(1, 3)
@@ -192,13 +269,13 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_7.addWidget(self.label_7)
 
-        self.edit_document_api_url = QLineEdit(self.tab_api_setting)
-        self.edit_document_api_url.setObjectName(u"edit_document_api_url")
-        sizePolicy.setHeightForWidth(self.edit_document_api_url.sizePolicy().hasHeightForWidth())
-        self.edit_document_api_url.setSizePolicy(sizePolicy)
-        self.edit_document_api_url.setFont(font)
+        self.edit_multimodal_api_url = QLineEdit(self.tab_api_setting)
+        self.edit_multimodal_api_url.setObjectName(u"edit_multimodal_api_url")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_api_url.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_api_url.setSizePolicy(sizePolicy)
+        self.edit_multimodal_api_url.setFont(font)
 
-        self.horizontalLayout_7.addWidget(self.edit_document_api_url)
+        self.horizontalLayout_7.addWidget(self.edit_multimodal_api_url)
 
         self.horizontalLayout_7.setStretch(0, 1)
         self.horizontalLayout_7.setStretch(1, 3)
@@ -259,12 +336,15 @@ class Ui_SettingDialog(object):
 
         self.verticalLayout_2.setStretch(0, 2)
         self.verticalLayout_2.setStretch(1, 2)
-        self.verticalLayout_2.setStretch(3, 2)
+        self.verticalLayout_2.setStretch(2, 2)
         self.verticalLayout_2.setStretch(4, 2)
+        self.verticalLayout_2.setStretch(5, 2)
         self.verticalLayout_2.setStretch(6, 2)
-        self.verticalLayout_2.setStretch(7, 2)
+        self.verticalLayout_2.setStretch(8, 2)
         self.verticalLayout_2.setStretch(9, 2)
         self.verticalLayout_2.setStretch(10, 2)
+        self.verticalLayout_2.setStretch(12, 2)
+        self.verticalLayout_2.setStretch(13, 2)
 
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
 
@@ -273,13 +353,15 @@ class Ui_SettingDialog(object):
         self.tab_chat_setting.setObjectName(u"tab_chat_setting")
         sizePolicy.setHeightForWidth(self.tab_chat_setting.sizePolicy().hasHeightForWidth())
         self.tab_chat_setting.setSizePolicy(sizePolicy)
-        self.gridLayout_3 = QGridLayout(self.tab_chat_setting)
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayoutWidget_3 = QWidget(self.tab_chat_setting)
+        self.verticalLayoutWidget_3.setObjectName(u"verticalLayoutWidget_3")
+        self.verticalLayoutWidget_3.setGeometry(QRect(10, 10, 671, 561))
+        self.verticalLayout_3 = QVBoxLayout(self.verticalLayoutWidget_3)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.label_2 = QLabel(self.tab_chat_setting)
+        self.label_2 = QLabel(self.verticalLayoutWidget_3)
         self.label_2.setObjectName(u"label_2")
         sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
@@ -289,7 +371,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_10.addWidget(self.label_2)
 
-        self.edit_chat_user_prefix = QLineEdit(self.tab_chat_setting)
+        self.edit_chat_user_prefix = QLineEdit(self.verticalLayoutWidget_3)
         self.edit_chat_user_prefix.setObjectName(u"edit_chat_user_prefix")
         sizePolicy.setHeightForWidth(self.edit_chat_user_prefix.sizePolicy().hasHeightForWidth())
         self.edit_chat_user_prefix.setSizePolicy(sizePolicy)
@@ -304,7 +386,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_13 = QHBoxLayout()
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.label_12 = QLabel(self.tab_chat_setting)
+        self.label_12 = QLabel(self.verticalLayoutWidget_3)
         self.label_12.setObjectName(u"label_12")
         sizePolicy.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
         self.label_12.setSizePolicy(sizePolicy)
@@ -314,7 +396,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_13.addWidget(self.label_12)
 
-        self.combo_chat_user_font = QFontComboBox(self.tab_chat_setting)
+        self.combo_chat_user_font = QFontComboBox(self.verticalLayoutWidget_3)
         self.combo_chat_user_font.setObjectName(u"combo_chat_user_font")
         sizePolicy.setHeightForWidth(self.combo_chat_user_font.sizePolicy().hasHeightForWidth())
         self.combo_chat_user_font.setSizePolicy(sizePolicy)
@@ -328,7 +410,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_14 = QHBoxLayout()
         self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-        self.label_13 = QLabel(self.tab_chat_setting)
+        self.label_13 = QLabel(self.verticalLayoutWidget_3)
         self.label_13.setObjectName(u"label_13")
         sizePolicy.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
         self.label_13.setSizePolicy(sizePolicy)
@@ -338,7 +420,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_14.addWidget(self.label_13)
 
-        self.combo_chat_user_size = QComboBox(self.tab_chat_setting)
+        self.combo_chat_user_size = QComboBox(self.verticalLayoutWidget_3)
         self.combo_chat_user_size.setObjectName(u"combo_chat_user_size")
         sizePolicy.setHeightForWidth(self.combo_chat_user_size.sizePolicy().hasHeightForWidth())
         self.combo_chat_user_size.setSizePolicy(sizePolicy)
@@ -352,7 +434,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_15 = QHBoxLayout()
         self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.label_14 = QLabel(self.tab_chat_setting)
+        self.label_14 = QLabel(self.verticalLayoutWidget_3)
         self.label_14.setObjectName(u"label_14")
         sizePolicy.setHeightForWidth(self.label_14.sizePolicy().hasHeightForWidth())
         self.label_14.setSizePolicy(sizePolicy)
@@ -362,7 +444,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_15.addWidget(self.label_14)
 
-        self.btn_chat_user_color = QPushButton(self.tab_chat_setting)
+        self.btn_chat_user_color = QPushButton(self.verticalLayoutWidget_3)
         self.btn_chat_user_color.setObjectName(u"btn_chat_user_color")
         sizePolicy.setHeightForWidth(self.btn_chat_user_color.sizePolicy().hasHeightForWidth())
         self.btn_chat_user_color.setSizePolicy(sizePolicy)
@@ -380,7 +462,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_11 = QHBoxLayout()
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.label_10 = QLabel(self.tab_chat_setting)
+        self.label_10 = QLabel(self.verticalLayoutWidget_3)
         self.label_10.setObjectName(u"label_10")
         sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy)
@@ -390,7 +472,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_11.addWidget(self.label_10)
 
-        self.edit_chat_assistant_prefix = QLineEdit(self.tab_chat_setting)
+        self.edit_chat_assistant_prefix = QLineEdit(self.verticalLayoutWidget_3)
         self.edit_chat_assistant_prefix.setObjectName(u"edit_chat_assistant_prefix")
         sizePolicy.setHeightForWidth(self.edit_chat_assistant_prefix.sizePolicy().hasHeightForWidth())
         self.edit_chat_assistant_prefix.setSizePolicy(sizePolicy)
@@ -405,7 +487,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_12 = QHBoxLayout()
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.label_11 = QLabel(self.tab_chat_setting)
+        self.label_11 = QLabel(self.verticalLayoutWidget_3)
         self.label_11.setObjectName(u"label_11")
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
@@ -415,7 +497,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_12.addWidget(self.label_11)
 
-        self.edit_chat_assistant_prompt = QLineEdit(self.tab_chat_setting)
+        self.edit_chat_assistant_prompt = QLineEdit(self.verticalLayoutWidget_3)
         self.edit_chat_assistant_prompt.setObjectName(u"edit_chat_assistant_prompt")
         sizePolicy.setHeightForWidth(self.edit_chat_assistant_prompt.sizePolicy().hasHeightForWidth())
         self.edit_chat_assistant_prompt.setSizePolicy(sizePolicy)
@@ -430,7 +512,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_18 = QHBoxLayout()
         self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.label_17 = QLabel(self.tab_chat_setting)
+        self.label_17 = QLabel(self.verticalLayoutWidget_3)
         self.label_17.setObjectName(u"label_17")
         sizePolicy.setHeightForWidth(self.label_17.sizePolicy().hasHeightForWidth())
         self.label_17.setSizePolicy(sizePolicy)
@@ -440,7 +522,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_18.addWidget(self.label_17)
 
-        self.combo_chat_assisant_font = QFontComboBox(self.tab_chat_setting)
+        self.combo_chat_assisant_font = QFontComboBox(self.verticalLayoutWidget_3)
         self.combo_chat_assisant_font.setObjectName(u"combo_chat_assisant_font")
         sizePolicy.setHeightForWidth(self.combo_chat_assisant_font.sizePolicy().hasHeightForWidth())
         self.combo_chat_assisant_font.setSizePolicy(sizePolicy)
@@ -454,7 +536,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_17 = QHBoxLayout()
         self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
-        self.label_16 = QLabel(self.tab_chat_setting)
+        self.label_16 = QLabel(self.verticalLayoutWidget_3)
         self.label_16.setObjectName(u"label_16")
         sizePolicy.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
         self.label_16.setSizePolicy(sizePolicy)
@@ -464,7 +546,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_17.addWidget(self.label_16)
 
-        self.combo_chat_assistant_size = QComboBox(self.tab_chat_setting)
+        self.combo_chat_assistant_size = QComboBox(self.verticalLayoutWidget_3)
         self.combo_chat_assistant_size.setObjectName(u"combo_chat_assistant_size")
         sizePolicy.setHeightForWidth(self.combo_chat_assistant_size.sizePolicy().hasHeightForWidth())
         self.combo_chat_assistant_size.setSizePolicy(sizePolicy)
@@ -478,7 +560,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_16 = QHBoxLayout()
         self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
-        self.label_15 = QLabel(self.tab_chat_setting)
+        self.label_15 = QLabel(self.verticalLayoutWidget_3)
         self.label_15.setObjectName(u"label_15")
         sizePolicy.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
         self.label_15.setSizePolicy(sizePolicy)
@@ -488,7 +570,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_16.addWidget(self.label_15)
 
-        self.btn_chat_assisant_color = QPushButton(self.tab_chat_setting)
+        self.btn_chat_assisant_color = QPushButton(self.verticalLayoutWidget_3)
         self.btn_chat_assisant_color.setObjectName(u"btn_chat_assisant_color")
         sizePolicy.setHeightForWidth(self.btn_chat_assisant_color.sizePolicy().hasHeightForWidth())
         self.btn_chat_assisant_color.setSizePolicy(sizePolicy)
@@ -509,21 +591,20 @@ class Ui_SettingDialog(object):
         self.verticalLayout_3.setStretch(7, 1)
         self.verticalLayout_3.setStretch(8, 1)
         self.verticalLayout_3.setStretch(9, 1)
-
-        self.gridLayout_3.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
-
         self.tab_setting.addTab(self.tab_chat_setting, "")
         self.tab_research_setting = QWidget()
         self.tab_research_setting.setObjectName(u"tab_research_setting")
         sizePolicy.setHeightForWidth(self.tab_research_setting.sizePolicy().hasHeightForWidth())
         self.tab_research_setting.setSizePolicy(sizePolicy)
-        self.gridLayout_4 = QGridLayout(self.tab_research_setting)
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayoutWidget_4 = QWidget(self.tab_research_setting)
+        self.verticalLayoutWidget_4.setObjectName(u"verticalLayoutWidget_4")
+        self.verticalLayoutWidget_4.setGeometry(QRect(10, -70, 671, 561))
+        self.verticalLayout_4 = QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_19 = QHBoxLayout()
         self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
-        self.label_18 = QLabel(self.tab_research_setting)
+        self.label_18 = QLabel(self.verticalLayoutWidget_4)
         self.label_18.setObjectName(u"label_18")
         sizePolicy.setHeightForWidth(self.label_18.sizePolicy().hasHeightForWidth())
         self.label_18.setSizePolicy(sizePolicy)
@@ -533,7 +614,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_19.addWidget(self.label_18)
 
-        self.edit_research_user_prefix = QLineEdit(self.tab_research_setting)
+        self.edit_research_user_prefix = QLineEdit(self.verticalLayoutWidget_4)
         self.edit_research_user_prefix.setObjectName(u"edit_research_user_prefix")
         sizePolicy.setHeightForWidth(self.edit_research_user_prefix.sizePolicy().hasHeightForWidth())
         self.edit_research_user_prefix.setSizePolicy(sizePolicy)
@@ -548,7 +629,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_20 = QHBoxLayout()
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.label_19 = QLabel(self.tab_research_setting)
+        self.label_19 = QLabel(self.verticalLayoutWidget_4)
         self.label_19.setObjectName(u"label_19")
         sizePolicy.setHeightForWidth(self.label_19.sizePolicy().hasHeightForWidth())
         self.label_19.setSizePolicy(sizePolicy)
@@ -558,7 +639,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_20.addWidget(self.label_19)
 
-        self.combo_research_user_font = QFontComboBox(self.tab_research_setting)
+        self.combo_research_user_font = QFontComboBox(self.verticalLayoutWidget_4)
         self.combo_research_user_font.setObjectName(u"combo_research_user_font")
         sizePolicy.setHeightForWidth(self.combo_research_user_font.sizePolicy().hasHeightForWidth())
         self.combo_research_user_font.setSizePolicy(sizePolicy)
@@ -572,7 +653,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_21 = QHBoxLayout()
         self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
-        self.label_20 = QLabel(self.tab_research_setting)
+        self.label_20 = QLabel(self.verticalLayoutWidget_4)
         self.label_20.setObjectName(u"label_20")
         sizePolicy.setHeightForWidth(self.label_20.sizePolicy().hasHeightForWidth())
         self.label_20.setSizePolicy(sizePolicy)
@@ -582,7 +663,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_21.addWidget(self.label_20)
 
-        self.combo_research_user_size = QComboBox(self.tab_research_setting)
+        self.combo_research_user_size = QComboBox(self.verticalLayoutWidget_4)
         self.combo_research_user_size.setObjectName(u"combo_research_user_size")
         sizePolicy.setHeightForWidth(self.combo_research_user_size.sizePolicy().hasHeightForWidth())
         self.combo_research_user_size.setSizePolicy(sizePolicy)
@@ -596,7 +677,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_22 = QHBoxLayout()
         self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
-        self.label_21 = QLabel(self.tab_research_setting)
+        self.label_21 = QLabel(self.verticalLayoutWidget_4)
         self.label_21.setObjectName(u"label_21")
         sizePolicy.setHeightForWidth(self.label_21.sizePolicy().hasHeightForWidth())
         self.label_21.setSizePolicy(sizePolicy)
@@ -606,7 +687,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_22.addWidget(self.label_21)
 
-        self.btn_research_user_color = QPushButton(self.tab_research_setting)
+        self.btn_research_user_color = QPushButton(self.verticalLayoutWidget_4)
         self.btn_research_user_color.setObjectName(u"btn_research_user_color")
         sizePolicy.setHeightForWidth(self.btn_research_user_color.sizePolicy().hasHeightForWidth())
         self.btn_research_user_color.setSizePolicy(sizePolicy)
@@ -624,7 +705,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_23 = QHBoxLayout()
         self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
-        self.label_22 = QLabel(self.tab_research_setting)
+        self.label_22 = QLabel(self.verticalLayoutWidget_4)
         self.label_22.setObjectName(u"label_22")
         sizePolicy.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
         self.label_22.setSizePolicy(sizePolicy)
@@ -634,7 +715,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_23.addWidget(self.label_22)
 
-        self.edit_research_assistant_prefix = QLineEdit(self.tab_research_setting)
+        self.edit_research_assistant_prefix = QLineEdit(self.verticalLayoutWidget_4)
         self.edit_research_assistant_prefix.setObjectName(u"edit_research_assistant_prefix")
         sizePolicy.setHeightForWidth(self.edit_research_assistant_prefix.sizePolicy().hasHeightForWidth())
         self.edit_research_assistant_prefix.setSizePolicy(sizePolicy)
@@ -649,7 +730,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_24 = QHBoxLayout()
         self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
-        self.label_23 = QLabel(self.tab_research_setting)
+        self.label_23 = QLabel(self.verticalLayoutWidget_4)
         self.label_23.setObjectName(u"label_23")
         sizePolicy.setHeightForWidth(self.label_23.sizePolicy().hasHeightForWidth())
         self.label_23.setSizePolicy(sizePolicy)
@@ -659,7 +740,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_24.addWidget(self.label_23)
 
-        self.edit_research_assistant_prompt = QLineEdit(self.tab_research_setting)
+        self.edit_research_assistant_prompt = QLineEdit(self.verticalLayoutWidget_4)
         self.edit_research_assistant_prompt.setObjectName(u"edit_research_assistant_prompt")
         sizePolicy.setHeightForWidth(self.edit_research_assistant_prompt.sizePolicy().hasHeightForWidth())
         self.edit_research_assistant_prompt.setSizePolicy(sizePolicy)
@@ -674,7 +755,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_25 = QHBoxLayout()
         self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
-        self.label_24 = QLabel(self.tab_research_setting)
+        self.label_24 = QLabel(self.verticalLayoutWidget_4)
         self.label_24.setObjectName(u"label_24")
         sizePolicy.setHeightForWidth(self.label_24.sizePolicy().hasHeightForWidth())
         self.label_24.setSizePolicy(sizePolicy)
@@ -684,7 +765,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_25.addWidget(self.label_24)
 
-        self.edit_research_assistant_font = QFontComboBox(self.tab_research_setting)
+        self.edit_research_assistant_font = QFontComboBox(self.verticalLayoutWidget_4)
         self.edit_research_assistant_font.setObjectName(u"edit_research_assistant_font")
         sizePolicy.setHeightForWidth(self.edit_research_assistant_font.sizePolicy().hasHeightForWidth())
         self.edit_research_assistant_font.setSizePolicy(sizePolicy)
@@ -698,7 +779,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_26 = QHBoxLayout()
         self.horizontalLayout_26.setObjectName(u"horizontalLayout_26")
-        self.label_25 = QLabel(self.tab_research_setting)
+        self.label_25 = QLabel(self.verticalLayoutWidget_4)
         self.label_25.setObjectName(u"label_25")
         sizePolicy.setHeightForWidth(self.label_25.sizePolicy().hasHeightForWidth())
         self.label_25.setSizePolicy(sizePolicy)
@@ -708,7 +789,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_26.addWidget(self.label_25)
 
-        self.edit_research_assistant_size = QComboBox(self.tab_research_setting)
+        self.edit_research_assistant_size = QComboBox(self.verticalLayoutWidget_4)
         self.edit_research_assistant_size.setObjectName(u"edit_research_assistant_size")
         sizePolicy.setHeightForWidth(self.edit_research_assistant_size.sizePolicy().hasHeightForWidth())
         self.edit_research_assistant_size.setSizePolicy(sizePolicy)
@@ -722,7 +803,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_27 = QHBoxLayout()
         self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
-        self.label_26 = QLabel(self.tab_research_setting)
+        self.label_26 = QLabel(self.verticalLayoutWidget_4)
         self.label_26.setObjectName(u"label_26")
         sizePolicy.setHeightForWidth(self.label_26.sizePolicy().hasHeightForWidth())
         self.label_26.setSizePolicy(sizePolicy)
@@ -732,7 +813,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_27.addWidget(self.label_26)
 
-        self.btn_research_assisant_color = QPushButton(self.tab_research_setting)
+        self.btn_research_assisant_color = QPushButton(self.verticalLayoutWidget_4)
         self.btn_research_assisant_color.setObjectName(u"btn_research_assisant_color")
         sizePolicy.setHeightForWidth(self.btn_research_assisant_color.sizePolicy().hasHeightForWidth())
         self.btn_research_assisant_color.setSizePolicy(sizePolicy)
@@ -753,21 +834,20 @@ class Ui_SettingDialog(object):
         self.verticalLayout_4.setStretch(7, 1)
         self.verticalLayout_4.setStretch(8, 1)
         self.verticalLayout_4.setStretch(9, 1)
-
-        self.gridLayout_4.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
-
         self.tab_setting.addTab(self.tab_research_setting, "")
         self.tab_code_setting = QWidget()
         self.tab_code_setting.setObjectName(u"tab_code_setting")
         sizePolicy.setHeightForWidth(self.tab_code_setting.sizePolicy().hasHeightForWidth())
         self.tab_code_setting.setSizePolicy(sizePolicy)
-        self.gridLayout_5 = QGridLayout(self.tab_code_setting)
-        self.gridLayout_5.setObjectName(u"gridLayout_5")
-        self.verticalLayout_5 = QVBoxLayout()
+        self.verticalLayoutWidget_5 = QWidget(self.tab_code_setting)
+        self.verticalLayoutWidget_5.setObjectName(u"verticalLayoutWidget_5")
+        self.verticalLayoutWidget_5.setGeometry(QRect(10, 10, 671, 561))
+        self.verticalLayout_5 = QVBoxLayout(self.verticalLayoutWidget_5)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_28 = QHBoxLayout()
         self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
-        self.label_27 = QLabel(self.tab_code_setting)
+        self.label_27 = QLabel(self.verticalLayoutWidget_5)
         self.label_27.setObjectName(u"label_27")
         sizePolicy.setHeightForWidth(self.label_27.sizePolicy().hasHeightForWidth())
         self.label_27.setSizePolicy(sizePolicy)
@@ -777,7 +857,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_28.addWidget(self.label_27)
 
-        self.edit_code_user_prefix = QLineEdit(self.tab_code_setting)
+        self.edit_code_user_prefix = QLineEdit(self.verticalLayoutWidget_5)
         self.edit_code_user_prefix.setObjectName(u"edit_code_user_prefix")
         sizePolicy.setHeightForWidth(self.edit_code_user_prefix.sizePolicy().hasHeightForWidth())
         self.edit_code_user_prefix.setSizePolicy(sizePolicy)
@@ -792,7 +872,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_29 = QHBoxLayout()
         self.horizontalLayout_29.setObjectName(u"horizontalLayout_29")
-        self.label_28 = QLabel(self.tab_code_setting)
+        self.label_28 = QLabel(self.verticalLayoutWidget_5)
         self.label_28.setObjectName(u"label_28")
         sizePolicy.setHeightForWidth(self.label_28.sizePolicy().hasHeightForWidth())
         self.label_28.setSizePolicy(sizePolicy)
@@ -802,7 +882,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_29.addWidget(self.label_28)
 
-        self.edit_code_user_font = QFontComboBox(self.tab_code_setting)
+        self.edit_code_user_font = QFontComboBox(self.verticalLayoutWidget_5)
         self.edit_code_user_font.setObjectName(u"edit_code_user_font")
         sizePolicy.setHeightForWidth(self.edit_code_user_font.sizePolicy().hasHeightForWidth())
         self.edit_code_user_font.setSizePolicy(sizePolicy)
@@ -816,7 +896,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_30 = QHBoxLayout()
         self.horizontalLayout_30.setObjectName(u"horizontalLayout_30")
-        self.label_29 = QLabel(self.tab_code_setting)
+        self.label_29 = QLabel(self.verticalLayoutWidget_5)
         self.label_29.setObjectName(u"label_29")
         sizePolicy.setHeightForWidth(self.label_29.sizePolicy().hasHeightForWidth())
         self.label_29.setSizePolicy(sizePolicy)
@@ -826,7 +906,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_30.addWidget(self.label_29)
 
-        self.combo_code_user_size = QComboBox(self.tab_code_setting)
+        self.combo_code_user_size = QComboBox(self.verticalLayoutWidget_5)
         self.combo_code_user_size.setObjectName(u"combo_code_user_size")
         sizePolicy.setHeightForWidth(self.combo_code_user_size.sizePolicy().hasHeightForWidth())
         self.combo_code_user_size.setSizePolicy(sizePolicy)
@@ -840,7 +920,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_31 = QHBoxLayout()
         self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
-        self.label_30 = QLabel(self.tab_code_setting)
+        self.label_30 = QLabel(self.verticalLayoutWidget_5)
         self.label_30.setObjectName(u"label_30")
         sizePolicy.setHeightForWidth(self.label_30.sizePolicy().hasHeightForWidth())
         self.label_30.setSizePolicy(sizePolicy)
@@ -850,7 +930,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_31.addWidget(self.label_30)
 
-        self.btn_code_user_color = QPushButton(self.tab_code_setting)
+        self.btn_code_user_color = QPushButton(self.verticalLayoutWidget_5)
         self.btn_code_user_color.setObjectName(u"btn_code_user_color")
         sizePolicy.setHeightForWidth(self.btn_code_user_color.sizePolicy().hasHeightForWidth())
         self.btn_code_user_color.setSizePolicy(sizePolicy)
@@ -868,7 +948,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_32 = QHBoxLayout()
         self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
-        self.label_31 = QLabel(self.tab_code_setting)
+        self.label_31 = QLabel(self.verticalLayoutWidget_5)
         self.label_31.setObjectName(u"label_31")
         sizePolicy.setHeightForWidth(self.label_31.sizePolicy().hasHeightForWidth())
         self.label_31.setSizePolicy(sizePolicy)
@@ -878,7 +958,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_32.addWidget(self.label_31)
 
-        self.edit_code_assistant_prefix = QLineEdit(self.tab_code_setting)
+        self.edit_code_assistant_prefix = QLineEdit(self.verticalLayoutWidget_5)
         self.edit_code_assistant_prefix.setObjectName(u"edit_code_assistant_prefix")
         sizePolicy.setHeightForWidth(self.edit_code_assistant_prefix.sizePolicy().hasHeightForWidth())
         self.edit_code_assistant_prefix.setSizePolicy(sizePolicy)
@@ -893,7 +973,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_33 = QHBoxLayout()
         self.horizontalLayout_33.setObjectName(u"horizontalLayout_33")
-        self.label_32 = QLabel(self.tab_code_setting)
+        self.label_32 = QLabel(self.verticalLayoutWidget_5)
         self.label_32.setObjectName(u"label_32")
         sizePolicy.setHeightForWidth(self.label_32.sizePolicy().hasHeightForWidth())
         self.label_32.setSizePolicy(sizePolicy)
@@ -903,7 +983,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_33.addWidget(self.label_32)
 
-        self.edit_code_assistant_prompt = QLineEdit(self.tab_code_setting)
+        self.edit_code_assistant_prompt = QLineEdit(self.verticalLayoutWidget_5)
         self.edit_code_assistant_prompt.setObjectName(u"edit_code_assistant_prompt")
         sizePolicy.setHeightForWidth(self.edit_code_assistant_prompt.sizePolicy().hasHeightForWidth())
         self.edit_code_assistant_prompt.setSizePolicy(sizePolicy)
@@ -918,7 +998,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_34 = QHBoxLayout()
         self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
-        self.label_33 = QLabel(self.tab_code_setting)
+        self.label_33 = QLabel(self.verticalLayoutWidget_5)
         self.label_33.setObjectName(u"label_33")
         sizePolicy.setHeightForWidth(self.label_33.sizePolicy().hasHeightForWidth())
         self.label_33.setSizePolicy(sizePolicy)
@@ -928,7 +1008,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_34.addWidget(self.label_33)
 
-        self.edit_code_assistant_font = QFontComboBox(self.tab_code_setting)
+        self.edit_code_assistant_font = QFontComboBox(self.verticalLayoutWidget_5)
         self.edit_code_assistant_font.setObjectName(u"edit_code_assistant_font")
         sizePolicy.setHeightForWidth(self.edit_code_assistant_font.sizePolicy().hasHeightForWidth())
         self.edit_code_assistant_font.setSizePolicy(sizePolicy)
@@ -942,7 +1022,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_35 = QHBoxLayout()
         self.horizontalLayout_35.setObjectName(u"horizontalLayout_35")
-        self.label_34 = QLabel(self.tab_code_setting)
+        self.label_34 = QLabel(self.verticalLayoutWidget_5)
         self.label_34.setObjectName(u"label_34")
         sizePolicy.setHeightForWidth(self.label_34.sizePolicy().hasHeightForWidth())
         self.label_34.setSizePolicy(sizePolicy)
@@ -952,7 +1032,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_35.addWidget(self.label_34)
 
-        self.edit_code_assistant_size = QComboBox(self.tab_code_setting)
+        self.edit_code_assistant_size = QComboBox(self.verticalLayoutWidget_5)
         self.edit_code_assistant_size.setObjectName(u"edit_code_assistant_size")
         sizePolicy.setHeightForWidth(self.edit_code_assistant_size.sizePolicy().hasHeightForWidth())
         self.edit_code_assistant_size.setSizePolicy(sizePolicy)
@@ -966,7 +1046,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_36 = QHBoxLayout()
         self.horizontalLayout_36.setObjectName(u"horizontalLayout_36")
-        self.label_35 = QLabel(self.tab_code_setting)
+        self.label_35 = QLabel(self.verticalLayoutWidget_5)
         self.label_35.setObjectName(u"label_35")
         sizePolicy.setHeightForWidth(self.label_35.sizePolicy().hasHeightForWidth())
         self.label_35.setSizePolicy(sizePolicy)
@@ -976,7 +1056,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_36.addWidget(self.label_35)
 
-        self.btn_code_assisant_color = QPushButton(self.tab_code_setting)
+        self.btn_code_assisant_color = QPushButton(self.verticalLayoutWidget_5)
         self.btn_code_assisant_color.setObjectName(u"btn_code_assisant_color")
         sizePolicy.setHeightForWidth(self.btn_code_assisant_color.sizePolicy().hasHeightForWidth())
         self.btn_code_assisant_color.setSizePolicy(sizePolicy)
@@ -997,21 +1077,20 @@ class Ui_SettingDialog(object):
         self.verticalLayout_5.setStretch(7, 1)
         self.verticalLayout_5.setStretch(8, 1)
         self.verticalLayout_5.setStretch(9, 1)
-
-        self.gridLayout_5.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
-
         self.tab_setting.addTab(self.tab_code_setting, "")
         self.tab_document_setting = QWidget()
         self.tab_document_setting.setObjectName(u"tab_document_setting")
         sizePolicy.setHeightForWidth(self.tab_document_setting.sizePolicy().hasHeightForWidth())
         self.tab_document_setting.setSizePolicy(sizePolicy)
-        self.gridLayout_6 = QGridLayout(self.tab_document_setting)
-        self.gridLayout_6.setObjectName(u"gridLayout_6")
-        self.verticalLayout_6 = QVBoxLayout()
+        self.verticalLayoutWidget_6 = QWidget(self.tab_document_setting)
+        self.verticalLayoutWidget_6.setObjectName(u"verticalLayoutWidget_6")
+        self.verticalLayoutWidget_6.setGeometry(QRect(10, 10, 671, 561))
+        self.verticalLayout_6 = QVBoxLayout(self.verticalLayoutWidget_6)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_37 = QHBoxLayout()
         self.horizontalLayout_37.setObjectName(u"horizontalLayout_37")
-        self.label_36 = QLabel(self.tab_document_setting)
+        self.label_36 = QLabel(self.verticalLayoutWidget_6)
         self.label_36.setObjectName(u"label_36")
         sizePolicy.setHeightForWidth(self.label_36.sizePolicy().hasHeightForWidth())
         self.label_36.setSizePolicy(sizePolicy)
@@ -1021,13 +1100,13 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_37.addWidget(self.label_36)
 
-        self.edit_document_user_prefix = QLineEdit(self.tab_document_setting)
-        self.edit_document_user_prefix.setObjectName(u"edit_document_user_prefix")
-        sizePolicy.setHeightForWidth(self.edit_document_user_prefix.sizePolicy().hasHeightForWidth())
-        self.edit_document_user_prefix.setSizePolicy(sizePolicy)
-        self.edit_document_user_prefix.setFont(font)
+        self.edit_multimodal_user_prefix = QLineEdit(self.verticalLayoutWidget_6)
+        self.edit_multimodal_user_prefix.setObjectName(u"edit_multimodal_user_prefix")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_user_prefix.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_user_prefix.setSizePolicy(sizePolicy)
+        self.edit_multimodal_user_prefix.setFont(font)
 
-        self.horizontalLayout_37.addWidget(self.edit_document_user_prefix)
+        self.horizontalLayout_37.addWidget(self.edit_multimodal_user_prefix)
 
         self.horizontalLayout_37.setStretch(0, 1)
         self.horizontalLayout_37.setStretch(1, 3)
@@ -1036,7 +1115,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_38 = QHBoxLayout()
         self.horizontalLayout_38.setObjectName(u"horizontalLayout_38")
-        self.label_37 = QLabel(self.tab_document_setting)
+        self.label_37 = QLabel(self.verticalLayoutWidget_6)
         self.label_37.setObjectName(u"label_37")
         sizePolicy.setHeightForWidth(self.label_37.sizePolicy().hasHeightForWidth())
         self.label_37.setSizePolicy(sizePolicy)
@@ -1046,12 +1125,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_38.addWidget(self.label_37)
 
-        self.combo_document_user_font = QFontComboBox(self.tab_document_setting)
-        self.combo_document_user_font.setObjectName(u"combo_document_user_font")
-        sizePolicy.setHeightForWidth(self.combo_document_user_font.sizePolicy().hasHeightForWidth())
-        self.combo_document_user_font.setSizePolicy(sizePolicy)
+        self.combo_multimodal_user_font = QFontComboBox(self.verticalLayoutWidget_6)
+        self.combo_multimodal_user_font.setObjectName(u"combo_multimodal_user_font")
+        sizePolicy.setHeightForWidth(self.combo_multimodal_user_font.sizePolicy().hasHeightForWidth())
+        self.combo_multimodal_user_font.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_38.addWidget(self.combo_document_user_font)
+        self.horizontalLayout_38.addWidget(self.combo_multimodal_user_font)
 
         self.horizontalLayout_38.setStretch(0, 1)
         self.horizontalLayout_38.setStretch(1, 3)
@@ -1060,7 +1139,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_39 = QHBoxLayout()
         self.horizontalLayout_39.setObjectName(u"horizontalLayout_39")
-        self.label_38 = QLabel(self.tab_document_setting)
+        self.label_38 = QLabel(self.verticalLayoutWidget_6)
         self.label_38.setObjectName(u"label_38")
         sizePolicy.setHeightForWidth(self.label_38.sizePolicy().hasHeightForWidth())
         self.label_38.setSizePolicy(sizePolicy)
@@ -1070,12 +1149,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_39.addWidget(self.label_38)
 
-        self.combo_document_user_size = QComboBox(self.tab_document_setting)
-        self.combo_document_user_size.setObjectName(u"combo_document_user_size")
-        sizePolicy.setHeightForWidth(self.combo_document_user_size.sizePolicy().hasHeightForWidth())
-        self.combo_document_user_size.setSizePolicy(sizePolicy)
+        self.combo_multimodal_user_size = QComboBox(self.verticalLayoutWidget_6)
+        self.combo_multimodal_user_size.setObjectName(u"combo_multimodal_user_size")
+        sizePolicy.setHeightForWidth(self.combo_multimodal_user_size.sizePolicy().hasHeightForWidth())
+        self.combo_multimodal_user_size.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_39.addWidget(self.combo_document_user_size)
+        self.horizontalLayout_39.addWidget(self.combo_multimodal_user_size)
 
         self.horizontalLayout_39.setStretch(0, 1)
         self.horizontalLayout_39.setStretch(1, 3)
@@ -1084,7 +1163,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_40 = QHBoxLayout()
         self.horizontalLayout_40.setObjectName(u"horizontalLayout_40")
-        self.label_39 = QLabel(self.tab_document_setting)
+        self.label_39 = QLabel(self.verticalLayoutWidget_6)
         self.label_39.setObjectName(u"label_39")
         sizePolicy.setHeightForWidth(self.label_39.sizePolicy().hasHeightForWidth())
         self.label_39.setSizePolicy(sizePolicy)
@@ -1094,12 +1173,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_40.addWidget(self.label_39)
 
-        self.btn_document_user_color = QPushButton(self.tab_document_setting)
-        self.btn_document_user_color.setObjectName(u"btn_document_user_color")
-        sizePolicy.setHeightForWidth(self.btn_document_user_color.sizePolicy().hasHeightForWidth())
-        self.btn_document_user_color.setSizePolicy(sizePolicy)
+        self.btn_multimodal_user_color = QPushButton(self.verticalLayoutWidget_6)
+        self.btn_multimodal_user_color.setObjectName(u"btn_multimodal_user_color")
+        sizePolicy.setHeightForWidth(self.btn_multimodal_user_color.sizePolicy().hasHeightForWidth())
+        self.btn_multimodal_user_color.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_40.addWidget(self.btn_document_user_color)
+        self.horizontalLayout_40.addWidget(self.btn_multimodal_user_color)
 
         self.horizontalLayout_40.setStretch(0, 1)
         self.horizontalLayout_40.setStretch(1, 3)
@@ -1112,7 +1191,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_41 = QHBoxLayout()
         self.horizontalLayout_41.setObjectName(u"horizontalLayout_41")
-        self.label_40 = QLabel(self.tab_document_setting)
+        self.label_40 = QLabel(self.verticalLayoutWidget_6)
         self.label_40.setObjectName(u"label_40")
         sizePolicy.setHeightForWidth(self.label_40.sizePolicy().hasHeightForWidth())
         self.label_40.setSizePolicy(sizePolicy)
@@ -1122,13 +1201,13 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_41.addWidget(self.label_40)
 
-        self.edit_document_assistant_prefix = QLineEdit(self.tab_document_setting)
-        self.edit_document_assistant_prefix.setObjectName(u"edit_document_assistant_prefix")
-        sizePolicy.setHeightForWidth(self.edit_document_assistant_prefix.sizePolicy().hasHeightForWidth())
-        self.edit_document_assistant_prefix.setSizePolicy(sizePolicy)
-        self.edit_document_assistant_prefix.setFont(font)
+        self.edit_multimodal_assistant_prefix = QLineEdit(self.verticalLayoutWidget_6)
+        self.edit_multimodal_assistant_prefix.setObjectName(u"edit_multimodal_assistant_prefix")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_assistant_prefix.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_assistant_prefix.setSizePolicy(sizePolicy)
+        self.edit_multimodal_assistant_prefix.setFont(font)
 
-        self.horizontalLayout_41.addWidget(self.edit_document_assistant_prefix)
+        self.horizontalLayout_41.addWidget(self.edit_multimodal_assistant_prefix)
 
         self.horizontalLayout_41.setStretch(0, 1)
         self.horizontalLayout_41.setStretch(1, 3)
@@ -1137,7 +1216,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_42 = QHBoxLayout()
         self.horizontalLayout_42.setObjectName(u"horizontalLayout_42")
-        self.label_41 = QLabel(self.tab_document_setting)
+        self.label_41 = QLabel(self.verticalLayoutWidget_6)
         self.label_41.setObjectName(u"label_41")
         sizePolicy.setHeightForWidth(self.label_41.sizePolicy().hasHeightForWidth())
         self.label_41.setSizePolicy(sizePolicy)
@@ -1147,13 +1226,13 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_42.addWidget(self.label_41)
 
-        self.edit_document_assistant_prompt = QLineEdit(self.tab_document_setting)
-        self.edit_document_assistant_prompt.setObjectName(u"edit_document_assistant_prompt")
-        sizePolicy.setHeightForWidth(self.edit_document_assistant_prompt.sizePolicy().hasHeightForWidth())
-        self.edit_document_assistant_prompt.setSizePolicy(sizePolicy)
-        self.edit_document_assistant_prompt.setFont(font)
+        self.edit_multimodal_assistant_prompt = QLineEdit(self.verticalLayoutWidget_6)
+        self.edit_multimodal_assistant_prompt.setObjectName(u"edit_multimodal_assistant_prompt")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_assistant_prompt.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_assistant_prompt.setSizePolicy(sizePolicy)
+        self.edit_multimodal_assistant_prompt.setFont(font)
 
-        self.horizontalLayout_42.addWidget(self.edit_document_assistant_prompt)
+        self.horizontalLayout_42.addWidget(self.edit_multimodal_assistant_prompt)
 
         self.horizontalLayout_42.setStretch(0, 1)
         self.horizontalLayout_42.setStretch(1, 3)
@@ -1162,7 +1241,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_43 = QHBoxLayout()
         self.horizontalLayout_43.setObjectName(u"horizontalLayout_43")
-        self.label_42 = QLabel(self.tab_document_setting)
+        self.label_42 = QLabel(self.verticalLayoutWidget_6)
         self.label_42.setObjectName(u"label_42")
         sizePolicy.setHeightForWidth(self.label_42.sizePolicy().hasHeightForWidth())
         self.label_42.setSizePolicy(sizePolicy)
@@ -1172,12 +1251,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_43.addWidget(self.label_42)
 
-        self.edit_document_assistant_font = QFontComboBox(self.tab_document_setting)
-        self.edit_document_assistant_font.setObjectName(u"edit_document_assistant_font")
-        sizePolicy.setHeightForWidth(self.edit_document_assistant_font.sizePolicy().hasHeightForWidth())
-        self.edit_document_assistant_font.setSizePolicy(sizePolicy)
+        self.edit_multimodal_assistant_font = QFontComboBox(self.verticalLayoutWidget_6)
+        self.edit_multimodal_assistant_font.setObjectName(u"edit_multimodal_assistant_font")
+        sizePolicy.setHeightForWidth(self.edit_multimodal_assistant_font.sizePolicy().hasHeightForWidth())
+        self.edit_multimodal_assistant_font.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_43.addWidget(self.edit_document_assistant_font)
+        self.horizontalLayout_43.addWidget(self.edit_multimodal_assistant_font)
 
         self.horizontalLayout_43.setStretch(0, 1)
         self.horizontalLayout_43.setStretch(1, 3)
@@ -1186,7 +1265,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_44 = QHBoxLayout()
         self.horizontalLayout_44.setObjectName(u"horizontalLayout_44")
-        self.label_43 = QLabel(self.tab_document_setting)
+        self.label_43 = QLabel(self.verticalLayoutWidget_6)
         self.label_43.setObjectName(u"label_43")
         sizePolicy.setHeightForWidth(self.label_43.sizePolicy().hasHeightForWidth())
         self.label_43.setSizePolicy(sizePolicy)
@@ -1196,12 +1275,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_44.addWidget(self.label_43)
 
-        self.edit_document_assistant_size = QComboBox(self.tab_document_setting)
-        self.edit_document_assistant_size.setObjectName(u"edit_document_assistant_size")
-        sizePolicy.setHeightForWidth(self.edit_document_assistant_size.sizePolicy().hasHeightForWidth())
-        self.edit_document_assistant_size.setSizePolicy(sizePolicy)
+        self.combo_multimodal_assistant_size = QComboBox(self.verticalLayoutWidget_6)
+        self.combo_multimodal_assistant_size.setObjectName(u"combo_multimodal_assistant_size")
+        sizePolicy.setHeightForWidth(self.combo_multimodal_assistant_size.sizePolicy().hasHeightForWidth())
+        self.combo_multimodal_assistant_size.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_44.addWidget(self.edit_document_assistant_size)
+        self.horizontalLayout_44.addWidget(self.combo_multimodal_assistant_size)
 
         self.horizontalLayout_44.setStretch(0, 1)
         self.horizontalLayout_44.setStretch(1, 3)
@@ -1210,7 +1289,7 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_45 = QHBoxLayout()
         self.horizontalLayout_45.setObjectName(u"horizontalLayout_45")
-        self.label_44 = QLabel(self.tab_document_setting)
+        self.label_44 = QLabel(self.verticalLayoutWidget_6)
         self.label_44.setObjectName(u"label_44")
         sizePolicy.setHeightForWidth(self.label_44.sizePolicy().hasHeightForWidth())
         self.label_44.setSizePolicy(sizePolicy)
@@ -1220,12 +1299,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout_45.addWidget(self.label_44)
 
-        self.btn_document_assisant_color = QPushButton(self.tab_document_setting)
-        self.btn_document_assisant_color.setObjectName(u"btn_document_assisant_color")
-        sizePolicy.setHeightForWidth(self.btn_document_assisant_color.sizePolicy().hasHeightForWidth())
-        self.btn_document_assisant_color.setSizePolicy(sizePolicy)
+        self.btn_multimodal_assisant_color = QPushButton(self.verticalLayoutWidget_6)
+        self.btn_multimodal_assisant_color.setObjectName(u"btn_multimodal_assisant_color")
+        sizePolicy.setHeightForWidth(self.btn_multimodal_assisant_color.sizePolicy().hasHeightForWidth())
+        self.btn_multimodal_assisant_color.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_45.addWidget(self.btn_document_assisant_color)
+        self.horizontalLayout_45.addWidget(self.btn_multimodal_assisant_color)
 
         self.horizontalLayout_45.setStretch(0, 1)
         self.horizontalLayout_45.setStretch(1, 3)
@@ -1241,18 +1320,17 @@ class Ui_SettingDialog(object):
         self.verticalLayout_6.setStretch(7, 1)
         self.verticalLayout_6.setStretch(8, 1)
         self.verticalLayout_6.setStretch(9, 1)
-
-        self.gridLayout_6.addLayout(self.verticalLayout_6, 0, 0, 1, 1)
-
         self.tab_setting.addTab(self.tab_document_setting, "")
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
         sizePolicy.setHeightForWidth(self.tab.sizePolicy().hasHeightForWidth())
         self.tab.setSizePolicy(sizePolicy)
-        self.gridLayout_7 = QGridLayout(self.tab)
-        self.gridLayout_7.setObjectName(u"gridLayout_7")
-        self.horizontalLayout_46 = QHBoxLayout()
+        self.horizontalLayoutWidget_19 = QWidget(self.tab)
+        self.horizontalLayoutWidget_19.setObjectName(u"horizontalLayoutWidget_19")
+        self.horizontalLayoutWidget_19.setGeometry(QRect(10, 10, 671, 561))
+        self.horizontalLayout_46 = QHBoxLayout(self.horizontalLayoutWidget_19)
         self.horizontalLayout_46.setObjectName(u"horizontalLayout_46")
+        self.horizontalLayout_46.setContentsMargins(0, 0, 0, 0)
         self.horizontalSpacer_4 = QSpacerItem(150, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_46.addItem(self.horizontalSpacer_4)
@@ -1263,28 +1341,28 @@ class Ui_SettingDialog(object):
 
         self.verticalLayout_7.addItem(self.verticalSpacer_9)
 
-        self.btn_export_setting = QPushButton(self.tab)
+        self.btn_export_setting = QPushButton(self.horizontalLayoutWidget_19)
         self.btn_export_setting.setObjectName(u"btn_export_setting")
         sizePolicy.setHeightForWidth(self.btn_export_setting.sizePolicy().hasHeightForWidth())
         self.btn_export_setting.setSizePolicy(sizePolicy)
 
         self.verticalLayout_7.addWidget(self.btn_export_setting)
 
-        self.btn_import_chat_history = QPushButton(self.tab)
+        self.btn_import_chat_history = QPushButton(self.horizontalLayoutWidget_19)
         self.btn_import_chat_history.setObjectName(u"btn_import_chat_history")
         sizePolicy.setHeightForWidth(self.btn_import_chat_history.sizePolicy().hasHeightForWidth())
         self.btn_import_chat_history.setSizePolicy(sizePolicy)
 
         self.verticalLayout_7.addWidget(self.btn_import_chat_history)
 
-        self.btn_import_setting = QPushButton(self.tab)
+        self.btn_import_setting = QPushButton(self.horizontalLayoutWidget_19)
         self.btn_import_setting.setObjectName(u"btn_import_setting")
         sizePolicy.setHeightForWidth(self.btn_import_setting.sizePolicy().hasHeightForWidth())
         self.btn_import_setting.setSizePolicy(sizePolicy)
 
         self.verticalLayout_7.addWidget(self.btn_import_setting)
 
-        self.btn_export_chat_history = QPushButton(self.tab)
+        self.btn_export_chat_history = QPushButton(self.horizontalLayoutWidget_19)
         self.btn_export_chat_history.setObjectName(u"btn_export_chat_history")
         sizePolicy.setHeightForWidth(self.btn_export_chat_history.sizePolicy().hasHeightForWidth())
         self.btn_export_chat_history.setSizePolicy(sizePolicy)
@@ -1307,9 +1385,6 @@ class Ui_SettingDialog(object):
         self.horizontalLayout_46.addItem(self.horizontalSpacer_3)
 
         self.horizontalLayout_46.setStretch(1, 1)
-
-        self.gridLayout_7.addLayout(self.horizontalLayout_46, 0, 0, 1, 1)
-
         self.tab_setting.addTab(self.tab, "")
 
         self.verticalLayout.addWidget(self.tab_setting)
@@ -1323,20 +1398,12 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout.addWidget(self.btn_default_setting)
 
-        self.horizontalSpacer = QSpacerItem(25, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer)
-
         self.btn_apply_setting = QPushButton(SettingDialog)
         self.btn_apply_setting.setObjectName(u"btn_apply_setting")
         sizePolicy.setHeightForWidth(self.btn_apply_setting.sizePolicy().hasHeightForWidth())
         self.btn_apply_setting.setSizePolicy(sizePolicy)
 
         self.horizontalLayout.addWidget(self.btn_apply_setting)
-
-        self.horizontalSpacer_2 = QSpacerItem(25, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
         self.btn_close_setting = QPushButton(SettingDialog)
         self.btn_close_setting.setObjectName(u"btn_close_setting")
@@ -1345,9 +1412,6 @@ class Ui_SettingDialog(object):
 
         self.horizontalLayout.addWidget(self.btn_close_setting)
 
-        self.horizontalLayout.setStretch(0, 1)
-        self.horizontalLayout.setStretch(2, 1)
-        self.horizontalLayout.setStretch(4, 1)
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -1359,7 +1423,7 @@ class Ui_SettingDialog(object):
 
         self.retranslateUi(SettingDialog)
 
-        self.tab_setting.setCurrentIndex(1)
+        self.tab_setting.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(SettingDialog)
@@ -1367,12 +1431,15 @@ class Ui_SettingDialog(object):
 
     def retranslateUi(self, SettingDialog):
         SettingDialog.setWindowTitle(QCoreApplication.translate("SettingDialog", u"\u7cfb\u7edf\u8bbe\u7f6e", None))
+        self.label_45.setText(QCoreApplication.translate("SettingDialog", u"\u804a\u5929\u6a21\u5f0f\u6a21\u578b\uff08\u4ec5\u652f\u6301LLM\uff09\uff1a", None))
         self.label.setText(QCoreApplication.translate("SettingDialog", u"\u804a\u5929\u6a21\u5f0fAPI Key:", None))
         self.label_4.setText(QCoreApplication.translate("SettingDialog", u"\u804a\u5929\u6a21\u5f0fAPI URL\uff1a", None))
+        self.label_46.setText(QCoreApplication.translate("SettingDialog", u"\u79d1\u7814\u52a9\u624b\u6a21\u578b\uff08\u4ec5\u652f\u6301LLM\uff09\uff1a", None))
         self.label_3.setText(QCoreApplication.translate("SettingDialog", u"\u79d1\u7814\u52a9\u624bAPI Key\uff1a", None))
         self.label_5.setText(QCoreApplication.translate("SettingDialog", u"\u79d1\u7814\u52a9\u624bAPI URL\uff1a", None))
-        self.label_6.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624bAPI key\uff1a", None))
-        self.label_7.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624bAPI URL\uff1a", None))
+        self.label_47.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u6a21\u578b\uff1a", None))
+        self.label_6.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624bAPI key\uff1a", None))
+        self.label_7.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624bAPI URL\uff1a", None))
         self.label_8.setText(QCoreApplication.translate("SettingDialog", u"\u672c\u5730\u6a21\u5f0fURL\uff1a", None))
         self.label_9.setText(QCoreApplication.translate("SettingDialog", u"\u672c\u5730\u6a21\u578b\uff1a", None))
         self.tab_setting.setTabText(self.tab_setting.indexOf(self.tab_api_setting), QCoreApplication.translate("SettingDialog", u"API\u8bbe\u7f6e", None))
@@ -1422,20 +1489,20 @@ class Ui_SettingDialog(object):
         self.btn_code_assisant_color.setText(QCoreApplication.translate("SettingDialog", u"\u5f53\u524d\u989c\u8272", None))
         self.tab_setting.setTabText(self.tab_setting.indexOf(self.tab_code_setting), QCoreApplication.translate("SettingDialog", u"\u4ee3\u7801\u52a9\u624b", None))
         self.label_36.setText(QCoreApplication.translate("SettingDialog", u"\u7528\u6237\u7684\u6635\u79f0\uff1a", None))
-        self.edit_document_user_prefix.setText("")
+        self.edit_multimodal_user_prefix.setText("")
         self.label_37.setText(QCoreApplication.translate("SettingDialog", u"\u7528\u6237\u7684\u5b57\u4f53\u6837\u5f0f\uff1a", None))
         self.label_38.setText(QCoreApplication.translate("SettingDialog", u"\u7528\u6237\u7684\u5b57\u4f53\u5927\u5c0f\uff1a", None))
         self.label_39.setText(QCoreApplication.translate("SettingDialog", u"\u7528\u6237\u7684\u5b57\u4f53\u989c\u8272\uff1a", None))
-        self.btn_document_user_color.setText(QCoreApplication.translate("SettingDialog", u"\u5f53\u524d\u989c\u8272", None))
-        self.label_40.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b\u7684\u6635\u79f0\uff1a", None))
-        self.edit_document_assistant_prefix.setText("")
-        self.label_41.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b\u7684\u4eba\u8bbe\uff1a", None))
-        self.edit_document_assistant_prompt.setText("")
-        self.label_42.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b\u7684\u5b57\u4f53\u6837\u5f0f\uff1a", None))
-        self.label_43.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b\u7684\u5b57\u4f53\u5927\u5c0f\uff1a", None))
-        self.label_44.setText(QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b\u7684\u5b57\u4f53\u989c\u8272\uff1a", None))
-        self.btn_document_assisant_color.setText(QCoreApplication.translate("SettingDialog", u"\u5f53\u524d\u989c\u8272", None))
-        self.tab_setting.setTabText(self.tab_setting.indexOf(self.tab_document_setting), QCoreApplication.translate("SettingDialog", u"\u6587\u6863\u52a9\u624b", None))
+        self.btn_multimodal_user_color.setText(QCoreApplication.translate("SettingDialog", u"\u5f53\u524d\u989c\u8272", None))
+        self.label_40.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u7684\u6635\u79f0\uff1a", None))
+        self.edit_multimodal_assistant_prefix.setText("")
+        self.label_41.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u7684\u4eba\u8bbe\uff1a", None))
+        self.edit_multimodal_assistant_prompt.setText("")
+        self.label_42.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u5b57\u4f53\u6837\u5f0f\uff1a", None))
+        self.label_43.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u7684\u5b57\u4f53\u5927\u5c0f\uff1a", None))
+        self.label_44.setText(QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b\u7684\u5b57\u4f53\u989c\u8272\uff1a", None))
+        self.btn_multimodal_assisant_color.setText(QCoreApplication.translate("SettingDialog", u"\u5f53\u524d\u989c\u8272", None))
+        self.tab_setting.setTabText(self.tab_setting.indexOf(self.tab_document_setting), QCoreApplication.translate("SettingDialog", u"\u591a\u6a21\u6001\u52a9\u624b", None))
         self.btn_export_setting.setText(QCoreApplication.translate("SettingDialog", u"\u5bfc\u51fa\u8bbe\u7f6e\u6587\u4ef6", None))
         self.btn_import_chat_history.setText(QCoreApplication.translate("SettingDialog", u"\u5bfc\u5165\u804a\u5929\u8bb0\u5f55", None))
         self.btn_import_setting.setText(QCoreApplication.translate("SettingDialog", u"\u5bfc\u5165\u8bbe\u7f6e\u6587\u4ef6", None))
