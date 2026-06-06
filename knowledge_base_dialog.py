@@ -65,7 +65,6 @@ class IndexProgressDialog(QDialog):
             QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, False)
             QApplication.setAttribute(Qt.AA_DisableHighDpiScaling, True)
         super().__init__(parent)
-        self.setupUi(self)
 
         # ===== 设置整个对话框的默认字体 =====
         from PySide6.QtGui import QFont
@@ -73,7 +72,6 @@ class IndexProgressDialog(QDialog):
         font.setPointSize(DEFAULT_FONT_SIZE)
         self.setFont(font)
 
-        super().__init__(parent)
         self.setWindowTitle("正在建立索引")
         self.setModal(True)
         self.setMinimumWidth(500)
